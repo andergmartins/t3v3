@@ -13,6 +13,16 @@
 			<field name="linkColor" type="color" default="" label="T3V3_VARS_LINK_COLOR_LABEL" description="T3V3_VARS_LINK_COLOR_DESC" />
 		</fieldset>
 		<fieldset name="visual_params" label="T3V3_THEMER_VISUAL">
+			<field name="visual_params_default" type="jadepend" function="@group">
+				<option for="logotype" value="text">
+						sitename,
+						slogan
+				</option>
+				<option for="logotype" value="image">
+					logoimage
+				</option>
+			</field>
+
 			<field name="inputBorderRadius" type="text" default="0px" class="input-tiny" label="T3V3_VARS_ELEMENT_RADIUS_LABEL" description="T3V3_VARS_ELEMENT_RADIUS_DESC" />
 
 			<field name="T3NavbarInverted" type="radio" class="btn-group" default="0"
@@ -28,6 +38,26 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
+
+			
+			<field name="logotype" type="list" default="text"
+				label="T3V3_THEME_LOGOTYPE_LABEL"
+				description="T3V3_THEME_LOGOTYPE_DESC" >
+				<option value="text">T3V3_THEME_LOGOTYPE_TEXT</option>
+				<option value="image">T3V3_THEME_LOGOTYPE_IMAGE</option>
+			</field>
+
+			<field name="sitename" type="text" default="Sitename" filter="RAW" global="1" size="50"
+				label="T3V3_THEME_SITENAME_LABEL"
+				description="T3V3_THEME_SITENAME_DESC" />
+			<field name="slogan" type="text" default="Your slogan goes here" filter="RAW" global="1" size="50"
+				label="T3V3_THEME_SLOGAN_LABEL"
+				description="T3V3_THEME_SLOGAN_DESC" />
+
+			<field name="logoimage" type="media" default=""  global="1"
+				label="T3V3_THEME_LOGOIMAGE_LABEL" 
+				description="T3V3_THEME_LOGOIMAGE_DESC" />
+
 		</fieldset>
 		<fieldset name="module_params" label="T3V3_THEMER_MODULE">
 			<field name="T3moduleBackground" type="color" default="" label="T3V3_VARS_MODULE_BGCOLOR_LABEL" description="T3V3_VARS_MODULE_BGCOLOR_DESC" />
