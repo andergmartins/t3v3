@@ -513,3 +513,19 @@ fieldset select {
 .modal-footer .btn-group .btn + .btn {
   margin-left: -1px;
 }
+
+
+/* Modal Media select */
+.controls a.modal {
+  position: static;
+  top: auto;
+  left: auto;
+  margin: 0;
+  display: block;
+  width: 60px;
+  box-shadow: none;
+}
+
+.controls .media-preview {
+  display: none;
+}

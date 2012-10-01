@@ -14,7 +14,8 @@ defined('_JEXEC') or die;
   <head>
     <jdoc:include type="head" />
     <?php $this->loadBlock ('head') ?>  
-    <?php $this->addStyleSheet('home-1') ?>
+    <?php $this->addStyleSheet('home') ?>
+    <?php $this->addStyleSheet('responsive-home') ?>
   </head>
 
   <body>
@@ -23,7 +24,7 @@ defined('_JEXEC') or die;
     
     <?php $this->loadBlock ('mainnav') ?>
     
-    <?php $this->loadBlock ('mainbody-home') ?>
+    <?php $this->loadBlock ('mainbody-home-1') ?>
     
     <?php $this->loadBlock ('footer') ?>
 

@@ -112,6 +112,14 @@ class T3V3Less extends lessc
 			}
 		}
 
+		// remove the dupliate clearfix at the beggining if not bootstrap.css file
+		if (!preg_match ('#bootstrap.less#', $path)) {
+			$arr = preg_split('/[\r?\n]{2,}/', $output);
+			// ignore first one, it's clearfix
+			array_shift($arr);
+			$output = implode("\n", $arr);
+		}
+
 		if ($topath) {
 			$tofile = JPATH_ROOT.'/'.$topath;
 			if (!is_dir (dirname($tofile))) {

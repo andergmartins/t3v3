@@ -15,6 +15,8 @@ defined('_JEXEC') or die;
 		<title><?php echo JText::_('T3V3_THEMEMAGIC_TITLE'); ?></title>
 		<link type="text/css" rel="stylesheet" href="<?php echo T3V3_ADMIN_URL; ?>/admin/assets/bootstrap/css/bootstrap.css" />
 		<link type="text/css" rel="stylesheet" href="<?php echo T3V3_ADMIN_URL; ?>/admin/assets/plugins/colorpicker/jquery.colorpicker.css" />
+		<link type="text/css" rel="stylesheet" href="<?php echo T3V3_ADMIN_URL; ?>/admin/assets/plugins/fancybox/jquery.fancybox-1.3.4.css" />
+		
 		<!--link type="text/css" rel="stylesheet" href="<?php echo T3V3_ADMIN_URL; ?>/admin/assets/plugins/chosen/chosen.css" /-->
 		<link type="text/css" rel="stylesheet" href="<?php echo T3V3_ADMIN_URL; ?>/admin/assets/css/thememagic.css" />
 
@@ -154,6 +156,7 @@ defined('_JEXEC') or die;
 		<script type="text/javascript" src="<?php echo T3V3_ADMIN_URL; ?>/admin/assets/js/json2.js"></script>
 		<!--script type="text/javascript" src="<?php echo T3V3_ADMIN_URL; ?>/admin/assets/plugins/chosen/chosen.jquery.js"></script-->
 		<script type="text/javascript" src="<?php echo T3V3_ADMIN_URL; ?>/admin/assets/plugins/colorpicker/jquery.colorpicker.js"></script>
+		<script type="text/javascript" src="<?php echo T3V3_ADMIN_URL; ?>/admin/assets/plugins/fancybox/jquery.fancybox-1.3.4.js"></script>
 		<script type="text/javascript" src="<?php echo T3V3_ADMIN_URL; ?>/includes/depend/assets/js/jadepend.js"></script>
 		<script type="text/javascript" src="<?php echo T3V3_ADMIN_URL; ?>/admin/assets/js/thememagic.js"></script>
 

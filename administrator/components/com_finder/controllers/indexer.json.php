@@ -72,7 +72,7 @@ class FinderControllerIndexer extends JControllerLegacy
 		try
 		{
 			// Trigger the onStartIndex event.
-			JDispatcher::getInstance()->trigger('onStartIndex');
+			JEventDispatcher::getInstance()->trigger('onStartIndex');
 
 			// Get the indexer state.
 			$state = FinderIndexer::getState();
@@ -179,10 +179,10 @@ class FinderControllerIndexer extends JControllerLegacy
 		try
 		{
 			// Trigger the onBeforeIndex event.
-			JDispatcher::getInstance()->trigger('onBeforeIndex');
+			JEventDispatcher::getInstance()->trigger('onBeforeIndex');
 
 			// Trigger the onBuildIndex event.
-			JDispatcher::getInstance()->trigger('onBuildIndex');
+			JEventDispatcher::getInstance()->trigger('onBuildIndex');
 
 			// Get the indexer state.
 			$state = FinderIndexer::getState();
@@ -234,8 +234,8 @@ class FinderControllerIndexer extends JControllerLegacy
 
 		try
 		{
-			// Optimize the index.
-			FinderIndexer::optimize();
+			// Optimize the index
+			FinderIndexer::getInstance()->optimize();
 
 			// Get the indexer state.
 			$state = FinderIndexer::getState();
@@ -278,8 +278,6 @@ class FinderControllerIndexer extends JControllerLegacy
 				$log = JLog::addLogger($options);
 			}
 		}
-
-		$backtrace = null;
 
 		// Send the assigned error code if we are catching an exception.
 		if ($data instanceof Exception)
