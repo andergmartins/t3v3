@@ -78,6 +78,7 @@ var T3V3Theme = window.T3V3Theme || {};
 						.filter('[for="' + this.id + '"]').addClass('active ' + ($(this).val() == '' ? 'btn-primary' : ($(this).val() == 0 ? 'btn-danger' : 'btn-success')));
 				}
 			});
+			
 		},
 		
 		initChosen: function(){
@@ -644,79 +645,6 @@ var T3V3Theme = window.T3V3Theme || {};
 
 				}
 			});
-		}
-	});
-	
-}(window.$ja || window.jQuery);
-
-!function ($) {
-	
-	$(document).ready(function(){
-		if(typeof SqueezeBox == 'undefined'){ 
-		//only initialize when there was no Joomla default modal box
-			$('.controls .modal').each(function(){
-				var rel = $(this).attr('rel'),
-					width = 800,
-					height = 500;
-
-				if(rel){
-					rel = ( window.execScript || window.eval ).call( window, '(' + rel + ')');
-					width = rel.size && rel.size.x ? rel.size.x : width;
-					height = rel.size && rel.size.y ? rel.size.y : height;
-				}
-
-				$(this).addClass('btn').attr('rel', '').fancybox({
-					width: width,
-					height: height,
-					titleShow: false,
-					transitionIn: 'elastic',
-					transitionOut: 'elastic',
-					easingIn: 'easeOutBack',
-					easingOut: 'easeInBack',
-					type: 'iframe'
-				});
-			});
-
-			window.SqueezeBox = {
-				close: function(){
-					$.fancybox.close();
-				}
-			};
-
-			window.jInsertFieldValue = function(value, id) {
-				var old_value = $('#' + id).val();
-				if (old_value != value) {
-					$('#' + id).val(value).trigger('change');
-
-					jMediaRefreshPreview(id);
-				}
-			};
-
-			window.jMediaRefreshPreview = function(id) {
-				var value = $('#' + id).val(),
-					img = $('#' + id + '_preview');
-
-				if (img.length) {
-					if (value) {
-						img.src = T3V3Theme.baseurl + value;
-						$('#' + id + '_preview_empty').css('display', 'none');
-						$('#' + id + '_preview_img').css('display', '');
-					} else { 
-						img.src = '';
-						$('#' + id + '_preview_empty').css('display', '');
-						$('#' + id + '_preview_img').css('display', 'none');
-					} 
-				} 
-			};
-
-			window.jMediaRefreshPreviewTip = function(tip){
-				var img = $(tip).find('img.media-preview');
-				$(tip).find('div.tip').css('max-width', 'none');
-				var id = img.attr('id');
-				id = id.substring(0, id.length - '_preview'.length);
-				jMediaRefreshPreview(id);
-				$(tip).css('display', 'block');
-			};
 		}
 	});
 	

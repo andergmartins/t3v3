@@ -104,6 +104,41 @@ var T3V3Admin = window.T3V3Admin || {};
 			var titles = jptitle.html().split(':');
 
 			jptitle.html(titles[0] + '<small>' + titles[1] + '</small>');
+		},
+
+		hideDisabled: function(){
+			$('#style-form').find('[disabled="disabled"]').closest('.control-group').hide();
+		},
+
+		initPreSubmit: function(){
+			var form = document.adminForm;
+			if(!form){
+				return false;
+			}
+
+			var onsubmit = form.onsubmit;
+			form.onsubmit = function(){
+				var json = {};
+				$(this).find('.jaa_positions').each(function(){
+					json[this.name.replace('jaa_', '')] = $(this).val();
+				});
+
+				console.log(json);
+
+				$('#jform_params_jat3v3_positions').val(JSON.stringify(json));
+
+				if($.isFunction(onsubmit)){
+					onsubmit();
+				}
+			};
+		},
+
+		initLayoutPosition: function(){
+			$(window).load(function(){
+				setTimeout(function(){
+					$('#jform_params_mainlayout').trigger('change.less');
+				}, 500);
+			});
 		}
 	});
 	
@@ -112,6 +147,9 @@ var T3V3Admin = window.T3V3Admin || {};
 		T3V3Admin.initBuildLessBtn();
 		T3V3Admin.initRadioGroup();
 		T3V3Admin.initChosen();
+		T3V3Admin.initPreSubmit();
+		T3V3Admin.initLayoutPosition();
+		T3V3Admin.hideDisabled();
 	});
 	
 }(window.$ja || window.jQuery);

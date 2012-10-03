@@ -8,7 +8,8 @@
 		
 		depends: {},
 		controls: {},
-		
+		ajaxs: {},
+
 		register: function(to, depend){
 			var controls = this.controls;
 			
@@ -16,7 +17,7 @@
 				controls[to] = [];
 				
 				var inst = this;
-				this.elmsFrom(to).on('change', function(e){
+				this.elmsFrom(to).on('change.less', function(e){
 					inst.change(this);
 				});
 			}
@@ -77,11 +78,8 @@
 				
 			info = $.extend({
 				group: 'params',
-				hiderow: true,
 				control: name
 			}, info);
-			
-			info.hiderow = !!info.hiderow;
 			
 			$.each(info.elms.split(','), function(el){
 				var elm = info.group +'[' + $.trim(this) + ']';
@@ -148,6 +146,100 @@
 			});
 			
 			return vals;
+		},
+
+		addajax: function(name, info){
+			var ajaxs = this.ajaxs;
+				
+			info = $.extend({
+				url: window.location.href,
+				langsprefix: 'T3V3_'
+			}, info);
+
+			if(info.query){
+				var urlparts = info.url.split('#');
+				if(urlparts[0].indexOf('?') == -1){
+					urlparts[0] += '?' + info.query;
+				} else {
+					urlparts[0] += '&' + info.query;
+				}
+				
+				info.url = urlparts.join('#');
+			}
+
+			if(!ajaxs[name]){
+				ajaxs[name] = {};
+
+				var inst = this;
+				this.elmsFrom(name).on('change.less', function(e){
+					inst.loadajax(this);
+				});
+			}
+
+			ajaxs[name].info = info;
+		},
+
+		loadajax: function(ctrlelm){
+			var ajaxs = this.ajaxs,
+				name = ctrlelm.name,
+				ctrl = ajaxs[name],
+				form = this;
+
+			if(!ctrl){
+				ctrl = ajaxs[name.substr(name.length - 2)];
+			}
+			
+			if(!ctrl){
+				return false;
+			}
+
+			var info = ctrl.info;
+			if(!info){
+				return false;
+			}
+
+			if(ctrl.elms && ctrl.elms.length){
+				$(ctrl.elms).remove();
+				ctrl.elms.length = 0;
+			} else {
+				ctrl.elms = [];
+			}
+
+			$.get(info.url, { layout: form.valuesFrom(form.elmsFrom(name))[0] }, function(rsp){
+				if(rsp){
+					var json = $.parseJSON(rsp);
+					if(json) {
+						//build structure in memory for better performance
+						var jplacholder = $('<div>');
+						$.each(json, function(key){
+							var jcontrols = $('<div class="control-group">' +
+									'<div class="control-label">' +
+										'<label id="jaa_' + key + '-lbl" for="jaa_' + key + '" class="hasTip" title="' + (JADepend.langs[(info.langsprefix + key + '_desc').toUpperCase()] || '') + '">' + (JADepend.langs[(info.langsprefix + key).toUpperCase()] || '') + '</label></div>' +
+									'<div class="controls">' +
+									'</div>' +
+								'</div>');
+
+							jcontrols.find('.controls').append($('#jformparamsjat3_all_pos').clone().attr({
+									id: 'jaa_' + key,
+									name: 'jaa_' + key,
+									style: '',
+									'class': 'jaa_positions'
+								}).prop('disabled', false).val(this + ''));
+
+							jcontrols.appendTo(jplacholder);
+
+							ctrl.elms.push(jcontrols[0]);
+						});
+
+						jplacholder.insertAfter($(ctrlelm).closest('.control-group')).children().insertBefore(jplacholder);
+						jplacholder.remove();
+
+						if(typeof T3V3Admin != 'undefined'){
+							T3V3Admin.initChosen();
+						}
+					}
+				}
+			});
 		},
 		
 		segment: function(seg){
@@ -406,6 +498,8 @@
 			return json;
 		}
 	};
+
+
 
 	$(window).on('load', function() {
 		setTimeout($.proxy(JADepend.start, JADepend), 100);

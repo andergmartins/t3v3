@@ -22,7 +22,7 @@ defined('_JEXEC') or die;
   <section class="ja-copyright">
     <div class="container">
       <div class="copyright">
-          <jdoc:include type="modules" name="footer" />
+          <jdoc:include type="modules" name="<?php $this->_p('footer') ?>" />
       </div>
       <?php
       $t3_logo = $this->getParam ('setting_t3logo', 't3-logo-light', 't3-logo-dark');

@@ -95,7 +95,7 @@ div.pagetitle h2 small {
   margin-right: 15px;
 }
 
-#t3v3toolbar #jatoolbar-style-close {
+#t3v3toolbar #jatoolbar-close {
   margin-left: 20px;
 }
 
@@ -130,8 +130,9 @@ div#element-box div.m {
 --------- */
 #element-box .header {
   background: #eee;
-  padding: 15px 20px 0;
+  padding: 0 20px;
   border-top: 1px solid #fff;
+  line-height: normal;
 }
 
 
@@ -238,6 +239,12 @@ fieldset button {
   margin: 0;
 }
 
+label#jform_title-lbl,
+label#jform_leveltitle-lbl,
+label#jform_grouptitle-lbl {
+  padding-top: 0;
+}
+
 
 .ja-progress {
   float: left;
@@ -318,36 +325,39 @@ fieldset button {
 
 
 /* Header Form Control ---*/ 
-.form-horizontal .header .control-group {
+.form-t3admin .form-horizontal .header .control-group {
   width: auto !important;
-  display: inline-block;
-  margin: 0 40px 15px 0;
+  display: block;
+  float: left;
+  margin: 15px 40px 15px 0;
   padding: 0;
   border: 0;
   background: none;
   box-shadow: none;
+  height: 30px;
 }
 
-.form-horizontal .header .control-group.hide {
+.form-t3admin .form-horizontal .header .control-group.hide {
   display: none;
 }
 
-.form-horizontal .header .control-label {
+.form-t3admin .form-horizontal .header .control-label {
   width: auto !important;
-  display: inline-block;
-  float: none;
-  padding: 0;
+  display: block;
+  float: left;
+  padding: 5px 0 0 0;
 }
 
-.form-horizontal .header .controls {
-  margin-left: 10px;
+.form-t3admin .form-horizontal .header .controls {
+  margin: 0 0 0 10px;
   width: auto !important;
-  display: inline-block;
-  float: none;
+  display: block;
+  float: left;
   padding: 0;
+  background: none;
 }
 
-.form-horizontal .header .inputbox {
+.form-t3admin .form-horizontal .header .inputbox {
   width: 250px;
   font-weight: bold;
 }
@@ -610,7 +620,14 @@ button.btn-primary:active {
 }
 
 .chzn-container .chzn-results .highlighted {
-  background-color: #3875d7;
+  background-color: #07b;
+  background-image: -moz-linear-gradient(top, #0097ee, #0077bb);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0097ee), to(#0077bb));
+  background-image: -webkit-linear-gradient(top, #0097ee, #0077bb);
+  background-image: -o-linear-gradient(top, #0097ee, #0077bb);
+  background-image: linear-gradient(to bottom, #0097ee, #0077bb);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0097ee', endColorstr='#ff0077bb', GradientType=0);
   color: #fff;
 }
 

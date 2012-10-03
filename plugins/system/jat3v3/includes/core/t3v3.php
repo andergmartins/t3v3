@@ -26,25 +26,26 @@ class T3v3 {
 	protected static $t3app = null;
 
 	public static function getApp($tpl = null){
-		if(empty(self::$t3app)){
-		
+		if(empty(self::$t3app)){	
 			$japp = JFactory::getApplication();
-			if($japp->isAdmin()){
-				t3v3import ('core/admin');
-				self::$t3app = new T3v3Admin();
-			} else {
-				
-				t3v3import ('extendable/extendable');
-				t3v3import ('core/template');
-
-				// create global t3v3 template object 
-				self::$t3app = new T3v3Template($tpl);
-			}
+			self::$t3app = $japp->isAdmin() ? self::getAdmin() : self::getSite($tpl); 
 		}
 		
 		return self::$t3app;
 	}
 
+	public static function getAdmin(){
+		t3v3import ('core/admin');
+		return new T3v3Admin();
+	}
+
+	public static function getSite($tpl){
+		t3v3import ('extendable/extendable');
+		t3v3import ('core/template');
+
+		// create global t3v3 template object 
+		return new T3v3Template($tpl);
+	}
 
 	public static function cleanPath ($path) {
 		$pattern = '/\w+\/\.\.\//';

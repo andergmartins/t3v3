@@ -58,8 +58,8 @@ class T3V3Less extends lessc
 
 		// split into array, separated by the import
 		$arr = preg_split ('#^\s*@import\s+"([^"]*)"\s*;#im', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
-		// check and add theme less
-		if ($theme) {
+		// check and add theme less if not is theme less
+		if ($theme && !preg_match('#themes/#', $path)) {
 			$themepath = 'themes/'.$theme.'/'.basename($path);
 			if (is_file (T3V3_TEMPLATE_PATH.'/assets/less/'.$themepath)) {
 				$arr[] = $themepath;

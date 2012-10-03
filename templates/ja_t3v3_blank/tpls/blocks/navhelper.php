@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
   <div class="container">
     <div class="row">
       <div class="span12">
-        <jdoc:include type="modules" name="<?php $this->posname('navhelper') ?>" />
+        <jdoc:include type="modules" name="<?php $this->_p('navhelper') ?>" />
       </div>
     </div>
   </div>

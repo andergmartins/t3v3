@@ -13,11 +13,13 @@
 // ---------------------------------------------------------
 .logo {
   float: left;
+
   h1, h1 a {
     display: inline-block;
     line-height: 1;
     margin: 0;
   }
+
 }
 
 
@@ -25,43 +27,51 @@
 // ----------
 .logo-image {
   overflow: hidden;
+
+  a {
+    background-image: url(@T3LogoImage);
+    background-repeat: no-repeat;
+    width: @T3logoWidth;
+    height: @T3logoHeight;
+  }
+
+  //hide sitename and slogan
+  span, small {
+    display: none;
+  }
+
 }
 
-.logo-image a {
-  display: inline-block;
-}
 
 
 // Logo Text
 // ----------
-.logo-text h1 {
-  color: @grayDark;
-}
+.logo-text {
 
-.logo-text h1 a {
-  color: @grayDark;
-  text-decoration: none;
-}
+  h1 {
+    color: @grayDark;
+  }
 
-.logo-text:hover h1 a,
-.logo-text h1 a:hover,
-.logo-text h1 a:active,
-.logo-text h1 a:focus {
-  text-decoration: none;
-}
+  h1 a {
+    color: @grayDark;
+    text-decoration: none;
+  }
 
-// Taglines
-.logo-text .site-slogan {
-  display: block;
-  font-size: @baseFontSize;
-  margin-top: 5px;
-}
+  &:hover h1 a,
+  h1 a:hover,
+  h1 a:active,
+  h1 a:focus {
+    text-decoration: none;
+  }
 
-// No slogan
-.logo-text.no-slogan .site-slogan {
-  display: none;
-}
+  // Taglines
+  .site-slogan {
+    display: block;
+    font-size: @baseFontSize;
+    margin-top: 5px;
+  }
 
+}
 
 // Head Search
 // ------------------------------------------------------

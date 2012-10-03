@@ -63,7 +63,7 @@
 
 			<fieldset name="layout_params" label="T3V3_PARAMS_LAYOUT">
 
-				<field name="pos_section_main" type="jadepend" default="" label="T3V3_POS_SECTION" description="T3V3_POS_SECTION_DESC" function="@legend" />
+				<!--field name="pos_section_main" type="jadepend" default="" label="T3V3_POS_SECTION" description="T3V3_POS_SECTION_DESC" function="@legend" />
 				<field name="pos_mainnav" type="japositions" default="mainnav" multiple="0" label="T3V3_POS_MAINNAV" description="T3V3_POS_MAINNAV_DESC" />
 				<field name="pos_sidebar-1" type="japositions" default="sidebar-1" multiple="0" label="T3V3_POS_SIDEBAR1" description="T3V3_POS_SIDEBAR1_DESC" />
 				<field name="pos_sidebar-2" type="japositions" default="sidebar-2" multiple="0" label="T3V3_POS_SIDEBAR2" description="T3V3_POS_SIDEBAR2_DESC" />
@@ -86,7 +86,7 @@
 				<field name="pos_footer-3" type="japositions" default="footer-3" multiple="0" label="" description="" />
 				<field name="pos_footer-4" type="japositions" default="footer-4" multiple="0" label="" description="" />
 				<field name="pos_footer-5" type="japositions" default="footer-5" multiple="0" label="" description="" />
-				<field name="pos_footer-6" type="japositions" default="footer-6" multiple="0" label="" description="" />
+				<field name="pos_footer-6" type="japositions" default="footer-6" multiple="0" label="" description="" /-->
 
 
 			</fieldset>

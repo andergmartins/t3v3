@@ -5,30 +5,27 @@
  * @license   GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+/**
+ * Mainbody 3 columns, content in right, mast-col on top of 2 sidebars: sidebar1 - sidebar2 - content
+ */
 defined('_JEXEC') or die;
 ?>
 
 <?php
 
   // Layout configuration
-  $layout_config = json_decode ('{
-    "two_sidebars_mast": { 
-      "default" : [ "span6 pull-right"         , "span6"             , "span3"             , "span3"           ],
-      "wide"    : [],
-      "xtablet" : [],
-      "tablet"  : [ "span12 pull-right"        , "span12 spanfirst"  , "span6 spanfirst"   , "span6"             ]
-    },  
+  $layout_config = json_decode ('{  
     "two_sidebars": {
-      "default" : [ "span6 pull-right" , "span3"    , "span3"             ],
+      "default" : [ "span6 pull-right"         , "span6"             , "span3"               , "span3"           ],
       "wide"    : [],
-      "xtablet" : [ "span8 pull-right"         , "span4"  , "span4"  ],
-      "tablet"  : [ "span12"        , "span6 spanfirst"   , "span6"             ]
+      "xtablet" : [ "span8 pull-right"         , "span4"             , "span4"               , "span4"           ],
+      "tablet"  : [ "span12"                   , "span12 spanfirst"  , "span6"               , "span6"           ]
     },
     "one_sidebar": {
-      "default" : [ "span9 pull-right"         , "span3"             ],
+      "default" : [ "span9 pull-right"         , "span3"             , "span3"             ],
       "wide"    : [],
-      "xtablet" : [ "span8 pull-right"         , "span4"             ],
-      "tablet"  : [ "span12"        , "span12 spanfirst"  ]
+      "xtablet" : [ "span8 pull-right"         , "span4"             , "span4"             ],
+      "tablet"  : [ "span12"                   , "span12 spanfirst"  , "span12"            ]
     },
     "no_sidebar": {
       "default" : [ "span12" ]
@@ -36,22 +33,19 @@ defined('_JEXEC') or die;
   }');
 
   // positions configuration
-  $mastcol  = $this->getPosname("mast-col");
-  $sidebar1 = $this->getPosname("sidebar-1");;
-  $sidebar2 = $this->getPosname("sidebar-2");;
+  $mastcol  = 'mast-col';
+  $sidebar1 = 'sidebar-1';
+  $sidebar2 = 'sidebar-2';
 
   // Detect layout
-  if ($this->countModules($mastcol)) {
-    $layout = "two_sidebars_mast";
+  if ($this->countModules($mastcol) or $this->countModules("$sidebar1 and $sidebar2")) {
+    $layout = "two_sidebars";
+  } elseif ($this->countModules("$sidebar1 or $sidebar2")) {
+    $layout = "one_sidebar";
   } else {
-    if ($this->countModules("$sidebar1 and $sidebar2")) {
-      $layout = "two_sidebars";
-    } elseif ($this->countModules("$sidebar1 or $sidebar2")) {
-      $layout = "one_sidebar";
-    } else {
-      $layout = "no_sidebar";
-    }
+    $layout = "no_sidebar";
   }
+
   $layout = $layout_config->$layout;
 
   //
@@ -68,29 +62,36 @@ defined('_JEXEC') or die;
     </div>
     <!-- //MAIN CONTENT -->
     
-    <?php if ($this->countModules($mastcol)) : ?>
-    <!-- MASSCOL 1 -->
-    <div class="ja-mastcol ja-mastcol-1 <?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
-      <jdoc:include type="modules" name="<?php echo $mastcol ?>" style="JAxhtml" />
-    </div>
-    <!-- //MASSCOL 1 -->
-    <?php endif ?>
+    <?php if ($this->countModules("$sidebar1 or $sidebar2 or $mastcol")) : ?>
+    <div class="ja-sidebar <?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
+      <?php if ($this->countModules($mastcol)) : ?>
+      <!-- MASSCOL 1 -->
+      <div class="ja-mastcol ja-mastcol-1">
+        <jdoc:include type="modules" name="<?php $this->_p($mastcol) ?>" style="JAxhtml" />
+      </div>
+      <!-- //MASSCOL 1 -->
+      <?php endif ?>
 
-    <?php if ($this->countModules("$sidebar1 or $mastcol")) : ?>
-    <!-- SIDEBAR 1 -->
-    <div class="ja-sidebar ja-sidebar-1 <?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
-      <jdoc:include type="modules" name="<?php echo $sidebar1 ?>" style="JAxhtml" />
+      <?php if ($this->countModules("$sidebar1 or $sidebar2")) : ?>
+      <div class="row">
+        <?php if ($this->countModules($sidebar1)) : ?>
+        <!-- SIDEBAR 1 -->
+        <div class="ja-sidebar ja-sidebar-1 <?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
+          <jdoc:include type="modules" name="<?php $this->_p($sidebar1) ?>" style="JAxhtml" />
+        </div>
+        <!-- //SIDEBAR 1 -->
+        <?php endif ?>
+        
+        <?php if ($this->countModules($sidebar2)) : ?>
+        <!-- SIDEBAR 2 -->
+        <div class="ja-sidebar ja-sidebar-2 <?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
+          <jdoc:include type="modules" name="<?php $this->_p($sidebar2) ?>" style="JAxhtml" />
+        </div>
+        <!-- //SIDEBAR 2 -->
+        <?php endif ?>
+      </div>
+      <?php endif ?>
     </div>
-    <!-- //SIDEBAR 1 -->
     <?php endif ?>
-    
-    <?php if ($this->countModules("$sidebar2 or $mastcol")) : ?>
-    <!-- SIDEBAR 2 -->
-    <div class="ja-sidebar ja-sidebar-2 <?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
-      <jdoc:include type="modules" name="<?php echo $sidebar2 ?>" style="JAxhtml" />
-    </div>
-    <!-- //SIDEBAR 2 -->
-    <?php endif ?>
-
   </div>
 </section> 

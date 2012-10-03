@@ -84,13 +84,68 @@ class T3V3Action extends JObject
 		}
 	}
 
+	public static function positions(){
+		JFactory::getLanguage()->load(T3V3_PLUGIN, JPATH_ADMINISTRATOR);
+
+		$japp = JFactory::getApplication();
+		if(!$japp->isAdmin()){
+			$tpl = $japp->getTemplate(true);
+		} else {
+
+			$tplid = JRequest::getCmd('view') == 'style' ? JRequest::getCmd('id', 0) : false;
+			if(!$tplid){
+				die(json_encode(array(
+					'error' => JText::_('T3V3_THEME_UNKNOW_ACTION')
+					)));
+			}
+
+			$cache = JFactory::getCache('com_templates', '');
+			if (!$templates = $cache->get('jat3tpl')) {
+				// Load styles
+				$db = JFactory::getDbo();
+				$query = $db->getQuery(true);
+				$query->select('id, home, template, s.params');
+				$query->from('#__template_styles as s');
+				$query->where('s.client_id = 0');
+				$query->where('e.enabled = 1');
+				$query->leftJoin('#__extensions as e ON e.element=s.template AND e.type='.$db->quote('template').' AND e.client_id=s.client_id');
+
+				$db->setQuery($query);
+				$templates = $db->loadObjectList('id');
+				foreach($templates as &$template) {
+					$registry = new JRegistry;
+					$registry->loadString($template->params);
+					$template->params = $registry;
+				}
+				$cache->store($templates, 'tjat3tpl');
+			}
+
+			if (isset($templates[$tplid])) {
+				$tpl = $templates[$tplid];
+			}
+			else {
+				$tpl = $templates[0];
+			}
+		}
+
+		$t3v3 = T3v3::getSite($tpl);
+		$layout = JRequest::getCmd('layout', 'default');
+		ob_start();
+		$t3v3->loadLayout ($layout);
+		ob_clean();
+		die(json_encode($t3v3->getPositions()));
+	}
+
 	static public function unittest () {
 		$app = JFactory::getApplication();
 		$tpl = $app->getTemplate(true);
 		$t3v3 = T3V3::getApp($tpl);
-		$t3v3->posname ('sidebar-1 , position-2 , position-3 , position-4');
-		echo "<br />";
-		$t3v3->posname ('sidebar-1 or position-2 or position-3 or position-4');
+		$layout = JRequest::getCmd('layout', 'default');
+		ob_start();
+		$t3v3->loadLayout ($layout);
+		ob_clean();
+		echo "Positions for layout [$layout]: <br />";
+		var_dump ($t3v3->getPositions());
 		exit;
 	}	
 }

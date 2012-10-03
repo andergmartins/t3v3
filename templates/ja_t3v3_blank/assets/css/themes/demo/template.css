@@ -147,6 +147,7 @@ body {
   font-size: 14px;
   line-height: 20px;
   margin: 0;
+  -webkit-font-smoothing: antialiased;
 }
 a {
   color: #07b;
@@ -1694,30 +1695,53 @@ dl.poll dd {
   vertical-align: middle;
   width: 16px;
 }
-.pagination ul,
-ul.pagenav {
-  float: left;
+.article-content .pagination ul {
+  border-left: 1px solid #ddd;
 }
-.pagination ul li,
-ul.pagenav li {
-  background: none;
-  display: block;
+.article-content .pagination ul li {
   float: left;
-  margin: 0;
-  overflow: hidden;
+  padding: 10px 20px;
+  line-height: normal;
+  border: 1px solid #ddd;
+  border-left: 0;
+}
+.article-content .pagination ul a {
+  border: 0;
+  text-decoration: none;
+  background-color: white;
+  line-height: normal;
   padding: 0;
 }
-.pagenavbar {
+.pagenavcounter {
+  margin: 0 0 20px;
   font-weight: bold;
 }
-.pagenavcounter {
-  margin: 15px 0;
-  text-align: center;
+#article-index {
+  float: right;
+  margin: 0 0 20px 20px;
+  padding: 10px;
+  width: 30%;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+#article-index ul {
+  margin: 0 0 0 20px;
+}
+.pagenav {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pagenav li {
+  margin: 0;
+  padding: 0;
 }
 .counter {
   float: right;
   line-height: 1;
-  margin: 15px 0;
+  margin: 10px 0;
   text-align: right;
 }
 .items-more h3 {
@@ -1728,18 +1752,6 @@ ul.pagenav li {
 .back_button a:active {
   display: block;
   margin: 10px 0;
-}
-.contenttoc {
-  float: right;
-  margin: 0 0 10px 12px;
-  padding: 0;
-  width: 30%;
-}
-.contenttoc td {
-  padding: 5px 10px;
-}
-.contenttoc th {
-  padding: 5px 10px;
 }
 fieldset.filters {
   margin: 10px 0 5px;

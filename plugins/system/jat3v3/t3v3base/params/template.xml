@@ -81,7 +81,13 @@
 				stripext="true"
 				hide_none="false"
 				hide_default="true"
+				ajax="true"
+				query="t3action=positions"
+				langsprefix='T3V3_POS_'
 			/>
+
+			<field name="jat3v3_positions" type="hidden" default="" value="" />
+			<field name="jat3_all_pos" type="japositions" default="" multiple="0" label="" description="" disabled="disabled" />
 
 		</fieldset>
 

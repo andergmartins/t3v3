@@ -26,6 +26,8 @@ class T3v3Template extends ObjectExtendable
 	 * @var    string
 	 */
 	protected $_scripts = null;
+	protected $_positions = array();
+	protected $_ppos = null;
 	/**
 	 * Class constructor
 	 *
@@ -39,6 +41,10 @@ class T3v3Template extends ObjectExtendable
 		}
 
 		$this->_scripts = array();
+		$ppos = new JRegistry;
+		$ppos->loadString($this->_tpl->params->get('jat3v3_positions'));
+
+		$this->_ppos = $ppos;
 	}
   
 	/**
@@ -123,6 +129,15 @@ class T3v3Template extends ObjectExtendable
 		return $width[$col];
 	}
 
+    /**
+     * Wrap of document countModules function, get position from configuration before calculate
+     */
+    function countModules($positions)
+    {
+    	$pos = $this->getPosname ($positions);
+        return $this->_tpl && method_exists($this->_tpl, 'countModules') ? $this->_tpl->countModules ($pos) : 0;
+    }
+
 	/**
 	* Get position name
 	*
@@ -136,7 +151,8 @@ class T3v3Template extends ObjectExtendable
 		{
 			// odd parts (modules)
 			$name = strtolower($words[$i]);
-			$words[$i] = $this->params->get ('pos_'.$name, $name);;
+			$this->_positions[$name] = $name;
+			$words[$i] = $this->_ppos->get ('pos_'.$name, $name);;
 		}
 
 		$poss = implode(' ', $words);
@@ -151,6 +167,18 @@ class T3v3Template extends ObjectExtendable
 	*/
 	function posname ($condition) {
 		echo $this->getPosname ($condition);
+	}
+
+	/**
+	* Alias of posname
+	*
+	*/
+	function _p ($condition) {
+		$this->posname ($condition);
+	}
+
+	function getPositions () {
+		return $this->_positions;
 	}
 
 	/**

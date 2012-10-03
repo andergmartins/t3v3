@@ -297,20 +297,16 @@ class JFormFieldJaDepend extends JFormField
 		<script type="text/javascript">
 			jQuery(window).on('load', function(){
 			<?php 
-				foreach ($this->element->children() as $option){
-					
-					
-					$elms = preg_replace('/\s+/', '', (string)$option[0]);
-					$hiderow = isset($option['hiderow'])? $option['hiderow'] : 1;
+			foreach ($this->element->children() as $option):
+				$elms = preg_replace('/\s+/', '', (string)$option[0]);
 			?>
-					JADepend.add('<?php echo $option['for']; ?>', {
-						val: '<?php echo $option['value']; ?>',
-						elms: '<?php echo $elms?>',
-						group: '<?php echo $group_name . '[' . @$matches[1][0] . ']'; ?>',
-						hiderow: <?php echo $hiderow?>
-					});
+				JADepend.add('<?php echo $option['for']; ?>', {
+					val: '<?php echo $option['value']; ?>',
+					elms: '<?php echo $elms?>',
+					group: '<?php echo $group_name . '[' . @$matches[1][0] . ']'; ?>'
+				});
 			<?php
-				}
+				endforeach;
 			?>
 			});
 		</script>

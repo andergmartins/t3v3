@@ -20,22 +20,18 @@ defined('_JEXEC') or die;
   	  </button>
 
   	  <div class="nav-collapse collapse">
-  		<?php
-    			$hasmenu = false;
-    			if($this->params->get('mm_enable', 0)){
-    				t3v3import('menu/mega');
-    				
-    				if(class_exists('JAMenuMega')){
-    					$menu = new JAMenuMega($this->params);
-    					$menu->loadMenu();
-    					$menu->genMenu();
-    					
-    					$hasmenu = true;
-    				}
-    			}
-    		?>
-  		<?php if($hasmenu == false): ?>
-  	    <jdoc:include type="modules" name="<?php $this->posname('mainnav') ?>" style="raw" />
+  		<?php if($this->params->get('mm_enable', 0)) : ?>
+      <?php
+				t3v3import('menu/mega');
+				
+				if(class_exists('JAMenuMega')){
+					$menu = new JAMenuMega($this->params);
+					$menu->loadMenu();
+					$menu->genMenu();
+				}
+   		?>
+  		<?php else: ?>
+  	    <jdoc:include type="modules" name="<?php $this->_p('mainnav') ?>" style="raw" />
   		<?php endif; ?>
   	  </div>
 

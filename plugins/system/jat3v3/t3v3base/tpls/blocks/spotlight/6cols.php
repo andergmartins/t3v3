@@ -31,22 +31,22 @@ defined('_JEXEC') or die;
 <!-- SPOTLIGHT -->
 <div class="row">
 	<div class="<?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
-	    <jdoc:include type="modules" name="<?php echo $pos[0] ?>" style="<?php echo $style ?>" />
+	    <jdoc:include type="modules" name="<?php $this->_p($pos[0]) ?>" style="<?php echo $style ?>" />
 	</div>
 	<div class="<?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
-	    <jdoc:include type="modules" name="<?php echo $pos[1] ?>" style="<?php echo $style ?>" />
+	    <jdoc:include type="modules" name="<?php $this->_p($pos[1]) ?>" style="<?php echo $style ?>" />
 	</div>
 	<div class="<?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
-	    <jdoc:include type="modules" name="<?php echo $pos[2] ?>" style="<?php echo $style ?>" />
+	    <jdoc:include type="modules" name="<?php $this->_p($pos[2]) ?>" style="<?php echo $style ?>" />
 	</div>
 	<div class="<?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
-	    <jdoc:include type="modules" name="<?php echo $pos[3] ?>" style="<?php echo $style ?>" />
+	    <jdoc:include type="modules" name="<?php $this->_p($pos[3]) ?>" style="<?php echo $style ?>" />
 	</div>
 	<div class="<?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
-	    <jdoc:include type="modules" name="<?php echo $pos[4] ?>" style="<?php echo $style ?>" />
+	    <jdoc:include type="modules" name="<?php $this->_p($pos[4]) ?>" style="<?php echo $style ?>" />
 	</div>
 	<div class="<?php echo $this->getClass($layout, $col) ?>" <?php echo $this->getData ($layout, $col++) ?>>
-	    <jdoc:include type="modules" name="<?php echo $pos[5] ?>" style="<?php echo $style ?>" />
+	    <jdoc:include type="modules" name="<?php $this->_p($pos[5]) ?>" style="<?php echo $style ?>" />
 	</div>
 </div>
 <!-- SPOTLIGHT -->

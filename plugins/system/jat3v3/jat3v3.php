@@ -57,8 +57,8 @@ class plgSystemJaT3v3 extends JPlugin
 				$jdoc->addScript(T3V3_ADMIN_URL . '/admin/assets/js/jquery-1.8.0.min.js');
 				$jdoc->addScript(T3V3_ADMIN_URL . '/admin/assets/bootstrap/js/bootstrap.js');
 				$jdoc->addScriptDeclaration ( 'var $ja = jQuery.noConflict();' );
-
 				$jdoc->addScript(T3V3_ADMIN_URL . '/includes/depend/assets/js/jadepend.js');
+				$jdoc->addScript(T3V3_ADMIN_URL . '/admin/assets/js/json2.js');
 
 				$jdoc->addScript(T3V3_ADMIN_URL . '/admin/assets/plugins/chosen/chosen.jquery.min.js');
 				$jdoc->addScript(T3V3_ADMIN_URL . '/admin/assets/js/t3v3admin.js');
@@ -125,6 +125,7 @@ class plgSystemJaT3v3 extends JPlugin
 						T3V3Theme.vars = ' . json_encode($params->toArray()) . ';
 						T3V3Theme.others = ' . json_encode($themeinfo) . ';
 						T3V3Theme.theme = \'' . $theme . '\';
+						T3V3Theme.base = \'' . JURI::base() . '\';
 						if(typeof less != \'undefined\'){
 							less.refresh();
 						}
