@@ -3187,6 +3187,11 @@ less.refresh = function (reload) {
     var startTime, endTime;
     startTime = endTime = new(Date);
 
+    /* JoomlArt */
+    if(typeof T3V3Theme != 'undefined') {
+        T3V3Theme.lessStart();
+    }
+
     loadStyleSheets(function (e, root, _, sheet, env) {
         if (env.local) {
             log("loading " + sheet.href + " from cache.");
@@ -3196,6 +3201,12 @@ less.refresh = function (reload) {
         }
         log("css for " + sheet.href + " generated in " + (new(Date) - endTime) + 'ms');
         (env.remaining === 0) && log("css generated in " + (new(Date) - startTime) + 'ms');
+
+        /* JoomlArt */
+        if(env.remaining === 0 && typeof T3V3Theme != 'undefined') {
+            T3V3Theme.lessComplete();
+        }
+
         endTime = new(Date);
     }, reload);
 

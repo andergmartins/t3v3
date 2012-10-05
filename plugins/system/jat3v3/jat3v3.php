@@ -69,6 +69,7 @@ class plgSystemJaT3v3 extends JPlugin
 				$params = $japp->getTemplate(true)->params;
 				if(defined('T3V3_THEMER') && $params->get('themermode', 0)){
 					
+					$jdoc->addStyleSheet(T3V3_URL.'/assets/css/thememagic.css');
 					$jdoc->addScript(T3V3_URL.'/assets/js/thememagic.js');
 					
 					$theme = $params->get('theme');
@@ -127,7 +128,14 @@ class plgSystemJaT3v3 extends JPlugin
 						T3V3Theme.theme = \'' . $theme . '\';
 						T3V3Theme.base = \'' . JURI::base() . '\';
 						if(typeof less != \'undefined\'){
+							
+							//we need to build one - cause the js will have unexpected behavior
 							less.refresh();
+
+							//get from parent
+							if(T3V3Theme.initrequest){
+								T3V3Theme.initrequest();
+							}
 						}
 					');
 				}

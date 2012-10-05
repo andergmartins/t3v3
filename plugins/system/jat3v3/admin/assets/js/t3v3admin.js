@@ -98,6 +98,22 @@ var T3V3Admin = window.T3V3Admin || {};
 			});
 		},
 
+		initChosenCustom: function(){
+			if(!$('#style-form').data('ja-chzn-default')){
+				$('#style-form').on('click', '.controls .ja-chzn-default', function(){
+					var jselect = $(this).hide().prev().prev();
+					jselect.val(jselect.attr('name').replace('jaa_', '')).trigger('liszt:updated');
+				}).on('change', 'select.jaa_positions', function(){
+					$(this).next().next('.ja-chzn-default')[$(this).val() != $(this).attr('name').replace('jaa_', '') ? 'show' : 'hide']();
+				}).data('ja-chzn-default', true);
+			}
+
+			$('#style-form').find('select.jaa_positions').chosen({
+				disable_search_threshold : 10,
+				allow_single_deselect : true
+			}).next('.chzn-container').after('<span class="ja-chzn-default"><i class="icon-star"><i></span>').prev().trigger('change');
+		},
+
 		initT3Title: function(){
 			var jptitle = $('.pagetitle');
 			if (!jptitle.length) jptitle = $('.page-title');
@@ -120,10 +136,11 @@ var T3V3Admin = window.T3V3Admin || {};
 			form.onsubmit = function(){
 				var json = {};
 				$(this).find('.jaa_positions').each(function(){
-					json[this.name.replace('jaa_', '')] = $(this).val();
-				});
+					var name = this.name.replace('jaa_', ''),
+						val = $(this).val();
 
-				console.log(json);
+					json[name] = val ? val : 'none';
+				});
 
 				$('#jform_params_jat3v3_positions').val(JSON.stringify(json));
 

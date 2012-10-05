@@ -53,11 +53,22 @@ class JFormFieldJaPositions extends JFormField
         $groups = $db->loadObjectList();
 
         $groupHTML = array();
+        if($this->element['show_empty']){
+            $groupHTML[] = JHTML::_('select.option', '', '');
+        }
+
+        if($this->element['show_none']){
+            $groupHTML[] = JHTML::_('select.option', 'none', JText::_('JNONE'));
+        }
+
         if ($groups && count($groups)) {
             foreach ($groups as $v=>$t) {
-                $groupHTML[] = JHTML::_('select.option', $t->position, $t->position);
+                if(!empty($t->position)){
+                    $groupHTML[] = JHTML::_('select.option', $t->position, $t->position);
+                }
             }
         }
+
         $lists = JHTML::_('select.genericlist', $groupHTML, $this->name . ($this->element['multiple'] == 1 ? '[]' : ''), ($this->element['multiple'] == 1 ? 'multiple="multiple" size="10" ' : '') . ($this->element['disabled'] ? 'disabled="disabled"' : ''), 'value', 'text', $this->value);
         
         return $lists;

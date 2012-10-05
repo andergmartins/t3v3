@@ -63,8 +63,16 @@ class JFormFieldJaModules extends JFormField
 					
         $db->setQuery($query);
         $groups = $db->loadObjectList();
-
         $groupHTML = array();
+
+        if($this->element['show_default']){
+            $groupHTML[] = JHTML::_('select.option', 'default', JText::_('JDEFAULT'));
+        }
+
+        if($this->element['show_none']){
+            $groupHTML[] = JHTML::_('select.option', 'none', JText::_('JNONE'));
+        } 
+
         if ($groups && count($groups)) {
             foreach ($groups as $v => $t) {
                 $groupHTML[] = JHTML::_('select.option', $t->id, $t->title);

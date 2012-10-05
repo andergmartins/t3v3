@@ -40,16 +40,18 @@ defined('_JEXEC') or die;
 					  <?php
 						echo JHTML::_('select.genericlist', $themes, 'ja-theme-list', 'autocomplete="off"', 'id', 'title', $tplparams->get('theme', -1));
 					  ?>
-					  <?php if( $isadmin) : ?>
+					 
 					  <div class="btn-group">
-						<button class="btn btn-primary" type="submit" id="ja-theme-submit" name="ja-theme-save"><?php echo JText::_('T3V3_THEMEMAGIC_SAVE') ?></button>
+						<button class="btn btn-primary" type="submit" id="ja-theme-preview"><?php echo JText::_('T3V3_THEMEMAGIC_PREVIEW') ?></button>
+						<?php if( $isadmin) : ?>
 						<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 						<ul class="dropdown-menu">
+						  <li><a id="ja-theme-save" href="#" title="Save As"><?php echo JText::_('T3V3_THEMEMAGIC_SAVE') ?></a></li>
 						  <li><a id="ja-theme-saveas" href="#" title="Save As"><?php echo JText::_('T3V3_THEMEMAGIC_SAVEAS') ?></a></li>
 						  <li><a id="ja-theme-delete" href="#" title="Delete"><?php echo JText::_('T3V3_THEMEMAGIC_DELETE') ?></a></li>
 						</ul>
+					  	<?php endif; ?>
 					  </div>
-					  <?php endif; ?>
 					</div>
 				  </form>
 				</div>

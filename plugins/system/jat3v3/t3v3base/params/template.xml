@@ -35,8 +35,8 @@
 
 			<field name="theme_params_default" type="jadepend" function="@group">
 				<option for="logotype" value="text">
-						sitename,
-						slogan
+					sitename,
+					slogan
 				</option>
 				<option for="logotype" value="image">
 					logoimage
@@ -87,7 +87,13 @@
 			/>
 
 			<field name="jat3v3_positions" type="hidden" default="" value="" />
-			<field name="jat3_all_pos" type="japositions" default="" multiple="0" label="" description="" disabled="disabled" />
+			<field name="jat3_all_pos" type="japositions" default="" 
+				multiple="0" 
+				label="" 
+				description="" 
+				disabled="disabled"
+				show_empty="true"
+			/>
 
 		</fieldset>
 

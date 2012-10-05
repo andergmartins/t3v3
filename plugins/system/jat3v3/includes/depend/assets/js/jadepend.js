@@ -171,9 +171,9 @@
 				ajaxs[name] = {};
 
 				var inst = this;
-				this.elmsFrom(name).on('change.less', function(e){
+				ajaxs[name].indicator = this.elmsFrom(name).on('change.less', function(e){
 					inst.loadajax(this);
-				});
+				}).after('<span class="ja-ajax-indicator"></span>').next();
 			}
 
 			ajaxs[name].info = info;
@@ -205,37 +205,53 @@
 				ctrl.elms = [];
 			}
 
+			if(ctrl.indicator.next('.chzn-container').length){
+				ctrl.indicator.insertAfter(ctrl.indicator.next('.chzn-container'));
+			}
+
+			ctrl.indicator.show();
+
 			$.get(info.url, { layout: form.valuesFrom(form.elmsFrom(name))[0] }, function(rsp){
+				ctrl.indicator.hide();
+
 				if(rsp){
 					var json = $.parseJSON(rsp);
 					if(json) {
 						//build structure in memory for better performance
-						var jplacholder = $('<div>');
-						$.each(json, function(key){
-							var jcontrols = $('<div class="control-group">' +
-									'<div class="control-label">' +
-										'<label id="jaa_' + key + '-lbl" for="jaa_' + key + '" class="hasTip" title="' + (JADepend.langs[(info.langsprefix + key + '_desc').toUpperCase()] || '') + '">' + (JADepend.langs[(info.langsprefix + key).toUpperCase()] || '') + '</label></div>' +
-									'<div class="controls">' +
-									'</div>' +
-								'</div>');
+						var jplacholder = $('<div>'),
+							jcontrol, key, val;
 
-							jcontrols.find('.controls').append($('#jformparamsjat3_all_pos').clone().attr({
-									id: 'jaa_' + key,
-									name: 'jaa_' + key,
-									style: '',
-									'class': 'jaa_positions'
-								}).prop('disabled', false).val(this + ''));
+						for(var key in json){
+							if(json.hasOwnProperty(key)){
+								val = json[key];
 
-							jcontrols.appendTo(jplacholder);
+								jcontrol = $(
+									'<div class="control-group">' +
+										'<div class="control-label">' +
+											'<label id="jaa_' + key + '-lbl" for="jaa_' + key + '" class="hasTip" title="' + (JADepend.langs[key] || key) + '">' + (JADepend.langs[key] || key) + '</label></div>' +
+											'<div class="controls">' +
+										'</div>' +
+									'</div>');
 
-							ctrl.elms.push(jcontrols[0]);
-						});
+								jcontrol.find('.controls').append($('#jformparamsjat3_all_pos').clone().attr({
+										'id': 'jaa_' + key,
+										'name': 'jaa_' + key,
+										'style': '',
+										//'data-placeholder': (key + ' (' + JADepend.langs['default'] + ')'),
+										'class': 'jaa_positions'
+									}).prop('disabled', false).val(val == 'none' ? '' : val));
 
+								jcontrol.appendTo(jplacholder);
+
+								ctrl.elms.push(jcontrol[0]);
+							}
+						}
+						
 						jplacholder.insertAfter($(ctrlelm).closest('.control-group')).children().insertBefore(jplacholder);
 						jplacholder.remove();
 
 						if(typeof T3V3Admin != 'undefined'){
-							T3V3Admin.initChosen();
+							T3V3Admin.initChosenCustom();
 						}
 					}
 				}

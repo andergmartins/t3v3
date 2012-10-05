@@ -716,7 +716,21 @@ button.btn-primary:active {
 }
 /* @end */
 
+/* JA Chosen default icon*/
+.ja-chzn-default {
+  position: relative;
+  z-index: 10;
+  margin-left: 5px;
+  cursor: pointer;
+}
 
+/* JA Ajax Indicator*/
+.ja-ajax-indicator {
+  display: block;
+  background: red;
+  width: 30px;
+  height: 26px;
+}
 
 /* ------------------------------------------------*/
 /* Special Contents

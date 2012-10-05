@@ -151,8 +151,8 @@ class T3v3Template extends ObjectExtendable
 		{
 			// odd parts (modules)
 			$name = strtolower($words[$i]);
-			$this->_positions[$name] = $name;
-			$words[$i] = $this->_ppos->get ('pos_'.$name, $name);;
+			$words[$i] = $this->_ppos->get ($name, $name);
+			$this->_positions[$name] = $words[$i];
 		}
 
 		$poss = implode(' ', $words);

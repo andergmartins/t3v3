@@ -13,7 +13,7 @@ var T3V3Theme = window.T3V3Theme || {};
 			this.initCPanel();
 			this.initCacheSource();
 			this.initThemeAction();
-			this.onJITCompile();
+			//this.onJITCompile();
 			this.initModalDialog();
 			this.initRadioGroup();
 			//this.initChosen();
@@ -127,9 +127,20 @@ var T3V3Theme = window.T3V3Theme || {};
 				return false;
 			});
 			
+			//preview theme
+			$('#ja-theme-preview').on('click', function(){
+				if($('#recss-progress').hasClass('invisible')){
+					T3V3Theme.applyLess();
+				}
+
+				return false;
+			});
+			
+
 			if(T3V3Theme.admin){
+
 				//save theme
-				$('#ja-theme-submit').on('click', function(){
+				$('#ja-theme-save').on('click', function(){
 					if(!$(this).hasClass('disabled')){
 						T3V3Theme.saveTheme();
 					}
@@ -156,7 +167,7 @@ var T3V3Theme = window.T3V3Theme || {};
 				T3V3Theme.fillData();
 			}
 
-			$('#ja-theme-submit, #ja-theme-clone, #ja-theme-delete')[($('#ja-theme-list').val() == 'default' ? 'addClass' : 'removeClass')]('disabled');
+			$('#ja-theme-save, #ja-theme-delete')[($('#ja-theme-list').val() == 'default' ? 'addClass' : 'removeClass')]('disabled');
 		},
 
 		initModalDialog: function(){
@@ -254,9 +265,9 @@ var T3V3Theme = window.T3V3Theme || {};
 			T3V3Theme.changed = false;
 
 			if(!pass){
-				this.offJITCompile();		//turn off JIT Compile for save cpu cycles
+				//this.offJITCompile();		//turn off JIT Compile for save cpu cycles
 				this.fillData();			//fill the data
-				this.onJITCompile();		//turn on JIT Compile again
+				//this.onJITCompile();		//turn on JIT Compile again
 				this.applyLess();			//refresh   	
 			}
 			
@@ -604,7 +615,7 @@ var T3V3Theme = window.T3V3Theme || {};
 			T3V3Theme.lid = setTimeout(T3V3Theme.applyLess, 1000);
 		},
 		listener: function(e){
-			if(typeof T3V3Theme.jsonstr != 'undefined' && e.origin == [window.location.protocol, '//', window.location.hostname, window.location.port].join('')){
+			if(e.origin == [window.location.protocol, '//', window.location.hostname, window.location.port].join('')){
 				if(e.data == 'rqless'){
 					T3V3Theme.applyLess(1);
 				}
@@ -640,7 +651,7 @@ var T3V3Theme = window.T3V3Theme || {};
 					if(info.iscancel){
 						$(e.target).val($(e.target).data('ccolor'));
 					} else {				
-						T3V3Theme.onKeypress.apply(e.target);
+						//T3V3Theme.onKeypress.apply(e.target);
 					}
 
 				}

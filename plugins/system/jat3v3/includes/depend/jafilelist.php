@@ -61,25 +61,12 @@ class JFormFieldJAFileList extends JFormFieldFileList
 
 			$colon = '';
 			$langs = array(
-				'T3V3_POS_MAINNAV' => JText::_('T3V3_POS_MAINNAV'),
-				'T3V3_POS_MAINNAV_DESC' => JText::_('T3V3_POS_MAINNAV_DESC'),
-				'T3V3_POS_SIDEBAR-1' => JText::_('T3V3_POS_SIDEBAR-1'),
-				'T3V3_POS_SIDEBAR-1_DESC' => JText::_('T3V3_POS_SIDEBAR-1_DESC'),
-				'T3V3_POS_SIDEBAR-2' => JText::_('T3V3_POS_SIDEBAR-2'),
-				'T3V3_POS_SIDEBAR-2_DESC' => JText::_('T3V3_POS_SIDEBAR-2_DESC'),
-				'T3V3_POS_MASTCOL' => JText::_('T3V3_POS_MASTCOL'),
-				'T3V3_POS_MASTCOL_DESC' => JText::_('T3V3_POS_MASTCOL_DESC'),
-				'T3V3_POS_TOPSL' => JText::_('T3V3_POS_TOPSL'),
-				'T3V3_POS_TOPSL_DESC' => JText::_('T3V3_POS_TOPSL_DESC'),
-				'T3V3_POS_BOTSL' => JText::_('T3V3_POS_BOTSL'),
-				'T3V3_POS_BOTSL_DESC' => JText::_('T3V3_POS_BOTSL_DESC'),
-				'T3V3_POS_FOOTNAV' => JText::_('T3V3_POS_FOOTNAV'),
-				'T3V3_POS_FOOTNAV_DESC' => JText::_('T3V3_POS_FOOTNAV_DESC'),
-				'T3V3_POS_SECTION' => JText::_('T3V3_POS_SECTION'),
-				'T3V3_POS_SECTION_DESC' => JText::_('T3V3_POS_SECTION_DESC')
+				'default' => JText::_('JDEFAULT'),
+				'none' => JText::_('JNONE')
 			);
 			?>
 			<script type="text/javascript">
+				//<![CDATA[
 				jQuery(window).on('load', function(){
 					JADepend.addajax('<?php echo $this->name ?>', {
 						<?php if ($this->element['url']):
@@ -110,6 +97,7 @@ class JFormFieldJAFileList extends JFormFieldFileList
 					JADepend.langs = JADepend.langs || {};
 					jQuery.extend(JADepend.langs, <?php echo json_encode($langs) ?>);				
 				});
+				//]]>
 			</script>
 			<?php
 		endif;
