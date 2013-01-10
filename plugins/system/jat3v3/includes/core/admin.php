@@ -91,11 +91,30 @@ class T3v3Admin {
 			'lblCompile' => JText::_('T3V3_LBL_RECOMPILE'),
 			'lblThemer' => JText::_('T3V3_LBL_VIEWTHEMER'),
 			'enableThemeMagic' => JText::_('T3V3_MSG_ENABLE_THEMEMAGIC'),
-
+			
+			'popoverLayoutTitle' => JText::_('T3V3_LAYOUT_POPOVER_TITLE'),
+			'popoverLayoutDesc' => JText::_('T3V3_LAYOUT_POPOVER_DESC'),
+			'popoverResponTitle' => JText::_('T3V3_LAYOUT_RESPON_PTITLE'),
+			'popoverResponDesc' => JText::_('T3V3_LAYOUT_RESPON_PDESC'),
 			'logoPresent' => JText::_('T3V3_LAYOUT_LOGO_TEXT'),
 			'emptyLayoutPosition' => JText::_('T3V3_LAYOUT_EMPTY_POSITION'),
 			'defaultLayoutPosition' => JText::_('T3V3_LAYOUT_DEFAULT_POSITION'),
 			
+			'devideWide' => JText::_('T3V3_LAYOUT_DVI_WIDE'),
+			'devideNormal' => JText::_('T3V3_LAYOUT_DVI_NORMAL'),
+			'devideXTablet' => JText::_('T3V3_LAYOUT_DVI_XTABLET'),
+			'devideTablet' => JText::_('T3V3_LAYOUT_DVI_TABLET'),
+			'devideMobile' => JText::_('T3V3_LAYOUT_DVI_MOBILE'),
+
+			'displayModeStructure' => JText::_('T3V3_LAYOUT_MODE_STRUCTURE'),
+			'displayModeLayout' => JText::_('T3V3_LAYOUT_MODE_LAYOUT'),
+
+			'layoutResetAll' => JText::_('T3V3_LAYOUT_RESET_ALL'),
+			'layoutResetDevice' => JText::_('T3V3_LAYOUT_RESET_PER_DEVICE'),
+			'layoutResetPosition' => JText::_('T3V3_LAYOUT_RESET_POSITION'),
+			'layoutClone' => JText::_('T3V3_LAYOUT_CLONE'),
+			'layoutName' => JText::_('T3V3_LAYOUT_NAME'),
+
 			'layoutConfig' => JText::_('T3V3_LAYOUT_CONFIG_TITLE'),
 			'layoutConfigDesc' => JText::_('T3V3_LAYOUT_CONFIG_DESC'),
 			'layoutUnknownWidth' => JText::_('T3V3_LAYOUT_UNKN_WIDTH'),
@@ -103,13 +122,6 @@ class T3v3Admin {
 			'layoutPosName' => JText::_('T3V3_LAYOUT_POS_NAME'),
 
 			'layoutCanNotLoad' => JText::_('T3V3_LAYOUT_LOAD_ERROR'),
-
-			'askCloneLayout' => JText::_('T3V3_LAYOUT_ASK_ADD_LAYOUT'),
-			'correctLayoutName' => JText::_('T3V3_LAYOUT_ASK_CORRECT_NAME'),
-			'askDeleteLayout' => JText::_('T3V3_LAYOUT_ASK_DEL_LAYOUT'),
-
-			'lblDeleteIt' => JText::_('T3V3_LAYOUT_LABEL_DELETEIT'),
-			'lblCloneIt' => JText::_('T3V3_LAYOUT_LABEL_CLONEIT'),
 
 			'layoutEditPosition' => JText::_('T3V3_LAYOUT_EDIT_POSITION'),
 			'layoutShowPosition' => JText::_('T3V3_LAYOUT_SHOW_POSITION'),
@@ -123,9 +135,12 @@ class T3v3Admin {
 			'updateCheckUpdate' => JText::_('T3V3_OVERVIEW_CHECK_UPDATE'),
 			'updateChkComplete' => JText::_('T3V3_OVERVIEW_CHK_UPDATE_OK'),
 			'updateHasNew' => JText::_('T3V3_OVERVIEW_TPL_NEW'),
-			'updateCompare' => JText::_('T3V3_OVERVIEW_TPL_COMPARE')
+			'updateCompare' => JText::_('T3V3_OVERVIEW_TPL_COMPARE'),
+
+			'close' => JText::_('T3V3_TOOLBAR_CLOSE')
 		);
 		
+
 		$japp = JFactory::getApplication();
 		$jdoc = JFactory::getDocument();
 
@@ -169,7 +184,7 @@ class T3v3Admin {
 
 		$jdoc->addStyleSheet(T3V3_ADMIN_URL . '/admin/plugins/chosen/chosen.css');
 		$jdoc->addStyleSheet(T3V3_ADMIN_URL . '/includes/depend/css/jadepend.css');
-		$jdoc->addStyleSheet(T3V3_ADMIN_URL . '/admin/layout/css/layout-custom.css');
+		$jdoc->addStyleSheet(T3V3_URL . '/css/layout-custom.css');
 		$jdoc->addStyleSheet(T3V3_ADMIN_URL . '/admin/layout/css/layout.css');
 		$jdoc->addStyleSheet(T3V3_ADMIN_URL . '/admin/css/t3v3admin.css');
 		if(!$jversion->isCompatible('3.0')){
@@ -188,8 +203,8 @@ class T3v3Admin {
 			var T3V3Admin = window.T3V3Admin || {};
 			T3V3Admin.adminurl = \'' . JFactory::getURI()->toString() . '\';
 			T3V3Admin.t3adminurl = \'' . T3V3_ADMIN_URL . '\';
-			T3V3Admin.baseurl = \'' . JURI::base(true) . '\';
-			T3V3Admin.rooturl = \'' . JURI::root() . '\';
+			T3V3Admin.baseurl = \'' . JURI::base(true) . '\';			
+			T3V3Admin.rooturl = \'' . JURI::root() . '\';			
 			T3V3Admin.template = \'' . T3V3_TEMPLATE . '\';
 			T3V3Admin.langs = ' . json_encode($langs) . ';
 			T3V3Admin.devmode = ' . $params->get('devmode', 0) . ';

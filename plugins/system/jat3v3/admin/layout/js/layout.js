@@ -48,439 +48,83 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 			var onsubmit = form.onsubmit;
 
 			form.onsubmit = function(e){
-				T3V3AdminLayout.t3savelayout(onsubmit);
-			};
-		},
+				var json = {},
+					jcontainer = $(this).find('.t3-layout-cont'),
+					jblocks = jcontainer.find('.t3-layout-pos'),
+					jspls = jcontainer.find('[data-spotlight]'),
+					jsplblocks = jspls.find('.t3-layout-pos');
 
-		initPrepareLayout: function(){
-			var jlayout = $('#t3-layout-admin').appendTo($('#jform_params_mainlayout').closest('.controls')),
-				jelms = $('#t3-layout-cont'),
-				jdevices = jlayout.find('.t3-layout-devices'),
-				jresetdevice = jlayout.find('.t3-reset-device'),
-				jresetposition = jlayout.find('.t3-reset-position'),
-				jresetall = jlayout.find('.t3-reset-all'),
-				jfullscreen = jlayout.find('.t3-tog-fullscreen'),
-				jselect = $('#t3-layout-tpl-positions');
+				jblocks.not(jspls).not(jsplblocks).not('.block-message, .block-component').each(function(){
+					var name = $(this).attr('data-original'),
+						val = $(this).find('.t3-layout-posname').html(),
+						vis = $(this).closest('[data-vis]').data('data-vis'),
+						others = $(this).closest('[data-others]').data('data-others'),
+						info = {position: val ? val : '', 'default': '', wide: '', normal: '', xtablet: '', tablet: '', mobile: ''};
 
-			jlayout
-				.find('.t3-layout-modes')
-				.on('click', 'li', function(){
-					if($(this).hasClass('mode-layout')){
-						jelms.removeClass('t3-layout-mode-m').addClass('t3-layout-mode-r');
-						T3V3AdminLayout.layout.mode = 1;
-
-						jdevices.removeClass('hide');
-						jresetdevice.removeClass('hide');
-						jresetposition.addClass('hide');
-						jselect.hide();
-
-						jelms.find('.t3-layout-vis').each(T3V3AdminLayout.t3updatevisible);
-						jdevices.find('[data-device="wide"]').removeClass('active').trigger('click');
-					} else {
-						jelms.removeClass('t3-layout-mode-r').addClass('t3-layout-mode-m');
-						T3V3AdminLayout.layout.mode = 0;
-
-						jdevices.addClass('hide');
-						jresetdevice.addClass('hide');
-						jresetposition.removeClass('hide');
-
-						jelms.removeClass(T3V3AdminLayout.layout.clayout);
-						T3V3AdminLayout.t3updatedevice('default');
+					if(vis){
+						vis = T3V3AdminLayout.t3visible(0, vis.vals);
+						T3V3AdminLayout.t3formatvisible(info, vis);
+						T3V3AdminLayout.t3formatothers(info, others);
 					}
-
-					$(this).addClass('active').siblings().removeClass('active');
-					return false;
-				});
-
-			jdevices.on('click', '.btn', function(e){
-				if(!$(this).hasClass('active')){
-					var nlayout = $(this).attr('data-device');
-					$(this).addClass('active').siblings('.active').removeClass('active');
-
-					jelms.removeClass(T3V3AdminLayout.layout.clayout);
-					if(T3V3AdminLayout.layout.mode == 1){
-						jelms.addClass(nlayout);
-					}
-
-					T3V3AdminLayout.t3updatedevice(nlayout);
-				}
-
-				return false;
-			});
-
-			T3V3AdminLayout.jresetall = jresetall.on('click', T3V3AdminLayout.t3resetall);
-			T3V3AdminLayout.jfullscreen = jfullscreen.on('click', T3V3AdminLayout.t3fullscreen);
-			T3V3AdminLayout.jresetposition = jresetposition.on('click', T3V3AdminLayout.t3resetposition);
-			T3V3AdminLayout.jresetdevice = jresetdevice.on('click', T3V3AdminLayout.t3resetdevice);
-			T3V3AdminLayout.jselect = jselect.appendTo(document.body).on('click', function(e){ return false; });
-			T3V3AdminLayout.jallpos = jselect.find('select');
-
-			jselect.find('select').on('change', function(){
-				var curspan = T3V3AdminLayout.curspan;
-
-				if(curspan){
-					$(curspan).parent().removeClass('pos-off pos-active').find('h3').html(this.value || T3V3Admin.langs.emptyLayoutPosition);
-					$(this).closest('.popover').hide();
-
-					var jspl = $(curspan).parent().parent().parent();
-					if(jspl.attr('data-spotlight')){
-						var spanidx = $(curspan).closest('.t3-layout-unit').index();
-						jspl.nextAll('.t3-layout-hiddenpos').children().eq(spanidx).html((this.value || T3V3Admin.langs.emptyLayoutPosition) + '<i class="icon-eye-close">');
-					}
-
-					if(!this.value){
-						$(curspan).parent().addClass('pos-off');
-					}
-
-					$(this)
-						.next('.t3-chzn-empty')[this.value ? 'removeClass' : 'addClass']('disabled')
-						.next('.t3-chzn-default')[this.value != $(curspan).closest('[data-original]').attr('data-original') ? 'removeClass' : 'addClass']('disabled');
-				}
-
-				return false;
-			});
-
-			jselect.find('.t3-chzn-empty, .t3-chzn-default')
-				.on('click', function(){
-					var curspan = T3V3AdminLayout.curspan;
-
-					if(curspan && !$(this).hasClass('disabled')){
-						var vdef = $(this).hasClass('t3-chzn-default') ? $(curspan).closest('[data-original]').attr('data-original') : '';
-						T3V3AdminLayout.jallpos.val(vdef).trigger('change');
-					}
-
-					return false;
-				});
-
-			$(document).off('click.t3layout').on('click.t3layout', function(){
-				var curspan = T3V3AdminLayout.curspan;
-
-				if(curspan){
-					$(curspan).parent().removeClass('pos-active');
-				}
-
-				jselect.hide();
-			});
-
-			$(window).load(function(){
-				setTimeout(function(){
-					$('#jform_params_mainlayout').trigger('change.less');
-				}, 500);
-			});
-		},
-
-		initMarkChange: function(){
-			clearTimeout(T3V3AdminLayout.chsid);
-
-			var jcontrol = $('#t3-layout-admin'),
-				jpane = jcontrol.closest('.tab-pane'),
-				jtab = $('.t3-admin-nav .nav li').eq(jpane.index()),
-
-			check = function(){
-				jcontrol[JSON.stringify(T3V3AdminLayout.t3getlayoutdata()) == T3V3AdminLayout.curconfig ? 'removeClass' : 'addClass']('t3-changed');
-				jtab[jpane.find('.t3-changed').length ? 'addClass' : 'removeClass']('t3-changed');
-
-				T3V3AdminLayout.chsid = setTimeout(check, 1500);
-			};
-
-			T3V3AdminLayout.curconfig = JSON.stringify(T3V3AdminLayout.t3getlayoutdata());
-			T3V3AdminLayout.chsid = setTimeout(check, 1500);
-		},
-
-		initLayoutClone: function(){
-			$('#t3-layout-clone-dlg')
-				.on('show', function(){
-					$('#t3-layout-cloned-name').val($('#jform_params_mainlayout').val() + '-copy');
-				})
-				.on('shown', function(){
-					$('#t3-layout-cloned-name').focus();
-				});
-
-			$('#t3-layout-clone-btns')
-				.insertAfter('#jform_params_mainlayout')
-				.find('#t3-layout-clone-copy').on('click', function(){
-					T3V3AdminLayout.prompt(T3V3Admin.langs.askCloneLayout, T3V3AdminLayout.t3clonelayout);
-					return false;
-				}).next().on('click', function(){
-					T3V3AdminLayout.confirm(T3V3Admin.langs.askDeleteLayout, T3V3AdminLayout.t3deletelayout);
-					return false;
-				});
-		},
-
-		initModalDialog: function(){
-			$('#t3-layout-clone-dlg')
-				.appendTo(document.body)
-				.on('click', '.modal-footer button', function(e){
-					if($.isFunction(T3V3AdminLayout.modalCallback)){
-						T3V3AdminLayout.modalCallback($(this).hasClass('yes'));
-					} else if($(this).hasClass('yes')){
-						$('#t3-layout-clone-dlg').modal('hide');
-					}
-					return false;
-				})
-				.find('.form-horizontal').on('submit', function(){
-					$('#t3-layout-clone-dlg .modal-footer .yes').trigger('click');
-
-					return false;
-				});
-		},
-
-		alert: function(msg, type, title, placeholder){
-			//remove
-			$('#t3-layout-alert').remove();
-
-			//add new
-			$([
-				'<div id="t3-layout-alert" class="alert alert-', (type || 'info'), '">',
-					'<button type="button" class="close" data-dismiss="alert">×</button>',
-					(title ? '<h4 class="alert-heading">' + title + '</h4>' : ''),
-					'<p>', msg, '</p>',
-				'</div>'].join(''))
-			.appendTo(placeholder || $('#system-message').show())
-			.alert();
-		},
-
-		confirm: function(msg, callback){
-			T3V3AdminLayout.modalCallback = callback;
-
-			var jdialog = $('#t3-layout-clone-dlg');
-			jdialog.find('h3').html(msg);
-			jdialog.find('.prompt-block').hide();
-			jdialog.find('.message-block').show();
-			jdialog.find('.btn-danger').show();
-			jdialog.find('.btn-success').hide();
-
-			jdialog.removeClass('modal-prompt modal-alert')
-				.addClass('modal-confirm')
-				.modal('show');
-		},
-
-		prompt: function(msg, callback){
-			T3V3AdminLayout.modalCallback = callback;
-
-			var jdialog = $('#t3-layout-clone-dlg');
-			jdialog.find('h3').html(msg);
-			jdialog.find('.message-block').hide();
-			jdialog.find('.prompt-block').show();
-			jdialog.find('.btn-success').show();
-			jdialog.find('.btn-danger').hide();
-
-			jdialog.removeClass('modal-alert modal-confirm')
-				.addClass('modal-prompt')
-				.modal('show');
-		},
-
-		t3reset: function(){
-			var jlayout = $('#t3-layout-admin'),
-				jelms = $('#t3-layout-cont');
-
-			jelms.removeClass('t3-layout-mode-r').addClass('t3-layout-mode-m');
-			jelms.removeClass(T3V3AdminLayout.layout.clayout);
-
-			T3V3AdminLayout.layout.mode = 0;
-			T3V3AdminLayout.layout.clayout = 'default';
-
-			jlayout.find('.mode-structure').addClass('active').siblings().removeClass('active');
-			jlayout.find('.t3-layout-devices').addClass('hide');
-			jlayout.find('.t3-reset-device').addClass('hide');
-			jlayout.find('.t3-reset-position').removeClass('hide');
-		},
-
-		t3clonelayout: function(ok){
-			if(ok != undefined && !ok){
-				return false;
-			}
-
-			var nname = $('#t3-layout-cloned-name').val();
-			if(nname){
-				nname = nname.replace(/[^0-9a-zA-Z_-]/g, '').replace(/ /, '').toLowerCase();					
-			}
-
-			if(nname == ''){
-				T3V3AdminLayout.alert(T3V3Admin.langs.correctLayoutName, 'warning', '', $('#t3-layout-cloned-name').parent());
-				return false;
-			}
-
-			T3V3AdminLayout.submit({
-				t3action: 'layout',
-				t3task: 'copy',
-				template: T3V3Admin.template,
-				original: $('#jform_params_mainlayout').val(),
-				layout: nname
-			}, T3V3AdminLayout.t3getlayoutdata(), function(json){
-				if(typeof json == 'object'){
-					if(json && (json.error || json.successful)){
-						T3V3Admin.systemMessage(json.error || json.successful);
-					}
-
-					if(json.successful){
-						var mainlayout = document.getElementById('jform_params_mainlayout');
-						mainlayout.options[mainlayout.options.length] = new Option(json.layout, json.layout);
-						mainlayout.options[mainlayout.options.length - 1].selected = true;
-						$(mainlayout).trigger('change.less').trigger('liszt:updated');
-					}
-				}
-			});
-		},
-
-		t3deletelayout: function(ok){
-			if(ok != undefined && !ok){
-				return false;
-			}
-
-			var nname = $('#jform_params_mainlayout').val();
-			
-			if(nname == ''){
-				return false;
-			}
-
-			T3V3AdminLayout.submit({
-				t3action: 'layout',
-				t3task: 'delete',
-				template: T3V3Admin.template,
-				layout: nname
-			}, function(json){
-				if(typeof json == 'object'){
-					if(json.successful && json.layout){
-						var mainlayout = document.getElementById('jform_params_mainlayout'),
-							options = mainlayout.options;
-
-						
-						for(var j = 0, jl = options.length; j < jl; j++){
-							if(options[j].value == json.layout){
-								mainlayout.remove(j);
-								break;
-							}
-						}
-					
-						options[0].selected = true;	
-						$(mainlayout).trigger('change.less').trigger('liszt:updated');
-					}					
-				}
-			});
-		},
-
-		t3savelayout: function(callback){
-			$.ajax({
-				async: false,
-				url: T3V3AdminLayout.mergeurl(
-					$.param({
-						t3action: 'layout',
-						t3task: 'save',
-						template: T3V3Admin.template,
-						layout: $('#jform_params_mainlayout').val()
-					})
-				),
-				type: 'post',
-				data: T3V3AdminLayout.t3getlayoutdata(),
-				complete: function(){
-					if($.isFunction(callback)){
-						callback();
-					}
-				}
-			});
-
-			return false;
-		},
-
-		t3getlayoutdata: function(){
-			var json = {},
-				jcontainer = $(document.adminForm).find('.t3-layout-cont'),
-				jblocks = jcontainer.find('.t3-layout-pos'),
-				jspls = jcontainer.find('[data-spotlight]'),
-				jsplblocks = jspls.find('.t3-layout-pos');
-
-			jblocks.not(jspls).not(jsplblocks).not('.t3-layout-uneditable').each(function(){
-				var name = $(this).attr('data-original'),
-					val = $(this).find('.t3-layout-posname').html(),
-					vis = $(this).closest('[data-vis]').data('data-vis'),
-					others = $(this).closest('[data-others]').data('data-others'),
-					info = {position: val ? val : '', 'default': '', wide: '', normal: '', xtablet: '', tablet: '', mobile: ''};
-
-				if(vis){
-					vis = T3V3AdminLayout.t3visible(0, vis.vals);
-					T3V3AdminLayout.t3formatvisible(info, vis);
-					T3V3AdminLayout.t3formatothers(info, others);
-				}
-
-				//optimize
-				T3V3AdminLayout.t3opimizeparam(info);
-
-				json[name] = info;
-			});
-			
-			jspls.each(function(){
-				var name = $(this).attr('data-spotlight'),
-					vis = $(this).data('data-vis'),
-					widths = $(this).data('data-widths'),
-					firsts = $(this).data('data-firsts'),
-					others = $(this).data('data-others');
-
-				$(this).children().each(function(idx){
-					var jpos = $(this),
-						pname = jpos.find('.t3-layout-pos').attr('data-original'),
-						val = jpos.find('.t3-layout-posname').html(),
-						info = {position: val, 'default': '', wide: '', normal: '', xtablet: '', tablet: '', mobile: ''},
-						width = T3V3AdminLayout.t3getwidth(idx, widths),
-						visible = T3V3AdminLayout.t3visible(idx, vis.vals),
-						first = T3V3AdminLayout.t3first(idx, firsts),
-						other = T3V3AdminLayout.t3others(idx, others);
-
-					T3V3AdminLayout.t3formatwidth(info, width);
-					T3V3AdminLayout.t3formatvisible(info, visible);
-					T3V3AdminLayout.t3formatfirst(info, first);
-					T3V3AdminLayout.t3formatothers(info, other);
 
 					//optimize
 					T3V3AdminLayout.t3opimizeparam(info);
 
-					json['block' + (idx + 1) + '@' + name] = info;
-				
+					json[name] = info;
 				});
-			});
+				
+				jspls.each(function(){
+					var name = $(this).attr('data-spotlight'),
+						vis = $(this).data('data-vis'),
+						widths = $(this).data('data-widths'),
+						firsts = $(this).data('data-firsts'),
+						others = $(this).data('data-others');
 
-			return json;
+					$(this).children().each(function(idx){
+						var jpos = $(this),
+							pname = jpos.find('.t3-layout-pos').attr('data-original'),
+							val = jpos.find('.t3-layout-posname').html(),
+							info = {position: val, 'default': '', wide: '', normal: '', xtablet: '', tablet: '', mobile: ''},
+							width = T3V3AdminLayout.t3getwidth(idx, widths),
+							visible = T3V3AdminLayout.t3visible(idx, vis.vals),
+							first = T3V3AdminLayout.t3first(idx, firsts),
+							other = T3V3AdminLayout.t3others(idx, others);
+
+						T3V3AdminLayout.t3formatwidth(info, width);
+						T3V3AdminLayout.t3formatvisible(info, visible);
+						T3V3AdminLayout.t3formatfirst(info, first);
+						T3V3AdminLayout.t3formatothers(info, other);
+
+						//optimize
+						T3V3AdminLayout.t3opimizeparam(info);
+
+						json['block' + (idx + 1) + '@' + name] = info;
+					
+					});
+				});
+
+				$.ajax({
+					async: false,
+					url: T3V3AdminLayout.mergeurl('t3action=layout&t3task=save&template=' + T3V3Admin.template + '&layout=' + $('#jform_params_mainlayout').val()),
+					type: 'post',
+					data: json,
+					complete: function(){
+						if($.isFunction(onsubmit)){
+							onsubmit();
+						}
+					}
+				});
+			};
+
+			//clean the json code - the value is no need
+			$('#jform_params_jat3v3_positions').val('');
 		},
 
-		submit: function(params, data, callback){
-			if(!callback){
-				callback = data;
-				data = null;
-			}
-
-			$.ajax({
-				async: false,
-				url: T3V3AdminLayout.mergeurl($.param(params)),
-				type: data ? 'post' : 'get',
-				data: data,
-				success: function(rsp){
-					
-					rsp = $.trim(rsp);
-					if(rsp){
-						var json = rsp;
-						if(rsp.charAt(0) != '[' && rsp.charAt(0) != '{'){
-							json = rsp.match(/{.*?}/);
-							if(json && json[0]){
-								json = json[0];
-							}
-						}
-
-						if(json && typeof json == 'string'){
-							json = $.parseJSON(json);
-
-							if(json && (json.error || json.successful)){
-								T3V3Admin.systemMessage(json.error || json.successful);
-							}
-						}
-					}
-
-					if($.isFunction(callback)){
-						callback(json || rsp);
-					}
-				},
-				complete: function(){
-					$('#t3-layout-clone-dlg').modal('hide');
-				}
+		initLayoutPosition: function(){
+			$(window).load(function(){
+				setTimeout(function(){
+					$('#jform_params_mainlayout').trigger('change.less');
+				}, 500);
 			});
 		},
 
@@ -495,20 +139,6 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 			}
 			
 			return urlparts.join('#');
-		},
-
-		t3fullscreen: function(){
-			if ($(this).hasClass('t3-fullscreen-full')) {
-				$('.subhead-collapse').removeClass ('subhead-fixed');
-				$('#t3-layout-admin').closest('.controls').removeClass ('controlbox-fixed');			
-				$(this).removeClass ('t3-fullscreen-full').find('i').removeClass().addClass('icon-resize-full');
-			} else {
-				$('.subhead-collapse').addClass ('subhead-fixed');
-				$('#t3-layout-admin').closest('.controls').addClass ('controlbox-fixed');
-				$(this).addClass ('t3-fullscreen-full').find('i').removeClass().addClass('icon-resize-small');
-			}
-
-			return false;
 		},
 
 		//this is not a general function, just use for t3 only - better performance
@@ -530,11 +160,11 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 			return dst;
 		},
 
-		t3equalheight: function(){
+		t3equalheight: function(jcontainer){
 			var property = ($.browser.msie && $.browser.version < 7) ? 'height' : 'min-height';
 
 			// Store the tallest element's height
-			$(T3V3AdminLayout.jelms.find('.row, .row-fluid').not('.ja-spotlight').get().reverse()).each(function(){
+			$($(jcontainer).find('.row, .row-fluid').not('.ja-spotlight').get().reverse()).each(function(){
 				var jrow = $(this),
 					jchilds = jrow.children(),
 					offset = jrow.offset().top,
@@ -583,8 +213,6 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 			for(var p in pos){
 				if(pos[p] === ''){
 					delete pos[p];
-				} else {
-					pos[p] = $.trim(pos[p]);
 				}
 			}
 		},
@@ -835,13 +463,13 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 		},
 
 		//apply responsive class - maybe we do not need this
-		t3updatedevice: function(nlayout){
+		t3updatedevice: function(jallelms, jspls, jrelms, nlayout){
 			//if (nlayout == T3V3AdminLayout.layout.clayout){
 			//	return false;
 			//}
 			var clayout = T3V3AdminLayout.layout.clayout;
 
-			T3V3AdminLayout.jrlems.each(function(){
+			jrelms.each(function(){
 				var jelm = $(this);
 				// no override for all devices 
 				if (!jelm.data('default')){
@@ -871,21 +499,21 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 			T3V3AdminLayout.layout.clayout = nlayout;
 			
 			//apply width from previous settings
-			T3V3AdminLayout.jspls.each(T3V3AdminLayout.t3updatespl);
-			T3V3AdminLayout.jelms.find('.t3-layout-vis').each(T3V3AdminLayout.t3updatevisible);
+			jspls.each(T3V3AdminLayout.t3updatespl);
+			jallelms.find('.t3-layout-vis').each(T3V3AdminLayout.t3updatevisible);
 
-			T3V3AdminLayout.t3equalheight();
+			T3V3AdminLayout.t3equalheight(jallelms);
 		},
 
-		t3resetdevice: function(){
+		t3resetdevice: function(container){
 			
 			var layout = T3V3AdminLayout.layout.clayout,
-				jcontainer = T3V3AdminLayout.jelms,
+				jcontainer = $(container),
 				jblocks = jcontainer.find('.t3-layout-pos'),
 				jspls = jcontainer.find('[data-spotlight]'),
 				jsplblocks = jspls.find('.t3-layout-pos');
 
-			jblocks.not(jspls).not(jsplblocks).not('.t3-layout-uneditable').each(function(){
+			jblocks.not(jspls).not(jsplblocks).not('.block-message, .block-component').each(function(){
 				var name = $(this).attr('data-original'),
 					vis = $(this).closest('[data-vis]').data('data-vis');
 
@@ -917,18 +545,39 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 
 			jspls.each(T3V3AdminLayout.t3updatespl);
 			jcontainer.find('.t3-layout-vis').each(T3V3AdminLayout.t3updatevisible);
-
-			return false;
 		},
 
-		t3resetall: function(){
+		t3clonelayout: function(container){
+			$.ajax({
+					async: false,
+					url: T3V3AdminLayout.mergeurl('t3action=layout&t3task=copy&template=' + T3V3Admin.template + '&original=' + $('#jform_params_mainlayout').val() + '&clone=' + $('#t3-layout-cloned-name').val()),
+					type: 'get',
+					success: function(response){
+						response = $.parseJSON(response);
+						if (!response.error && response.successful)
+						{
+							var field = jQuery('#jform_params_mainlayout');
+							field.append($('<option value="' + response.clone + '">' + response.clone + '</option>'));
+							field.val(response.clone);
+							field.trigger("liszt:updated");
+
+							$('#jform_params_mainlayout').trigger('change.less');
+						}
+					},
+					complete: function(){
+						$('#t3-clone-layout-prompt').modal('hide');
+					}
+				});
+		},
+
+		t3resetall: function(container){
 			var layout = T3V3AdminLayout.layout.clayout,
-				jcontainer = T3V3AdminLayout.jelms,
+				jcontainer = $(container),
 				jblocks = jcontainer.find('.t3-layout-pos'),
 				jspls = jcontainer.find('[data-spotlight]'),
 				jsplblocks = jspls.find('.t3-layout-pos');
 
-			jblocks.not(jspls).not(jsplblocks).not('.t3-layout-uneditable').each(function(){
+			jblocks.not(jspls).not(jsplblocks).not('.block-message, .block-component').each(function(){
 				if($(this).find('[data-original]').length){
 					return;
 				}
@@ -990,18 +639,16 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 
 			//change to default view
 			jcontainer.prev().find('.mode-structure').trigger('click');
-
-			return false;
 		},
 
-		t3resetposition: function(){
+		t3resetposition: function(container){
 			var layout = T3V3AdminLayout.layout.clayout,
-				jcontainer = T3V3AdminLayout.jelms,
+				jcontainer = $(container),
 				jblocks = jcontainer.find('.t3-layout-pos'),
 				jspls = jcontainer.find('[data-spotlight]'),
 				jsplblocks = jspls.find('.t3-layout-pos');
 
-			jblocks.not(jspls).not(jsplblocks).not('.t3-layout-uneditable').each(function(){
+			jblocks.not(jspls).not(jsplblocks).not('.block-message, .block-component').each(function(){
 				//reset position
 				$(this).find('.t3-layout-posname')
 					.html(
@@ -1027,8 +674,6 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 					}
 				});
 			});
-
-			return false;
 		},
 
 		t3onvisible: function(){
@@ -1091,31 +736,163 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 		},
 
 		t3layout: function(form, ctrlelm, ctrl, rsp){
-			
 			if(rsp){
 				var bdhtml = rsp.match(/<body[^>]*>([\w|\W]*)<\/body>/im),
 					vname = ctrlelm.name.replace(/[\[\]]/g, ''),
-					jcontrol = $(ctrlelm).closest('.control-group');
+					jcontrol = $([
+							'<div class="control-group">',
+								'<div class="control-label">',
+									'<label class="hasTip" title=""></label>', 
+								'</div>',
+								'<div class="controls">',
+								'</div>',
+							'</div>'].join(''))
+							.insertAfter($('#jformparamsjat3_all_pos').closest('.control-group'));
 
 				//stripScripts
 				if(bdhtml){
-					bdhtml = bdhtml[1].replace(new RegExp('<script[^>]*>([\\S\\s]*?)<\/script\\s*>', 'img'), '');
+					bdhtml = bdhtml[0].replace(new RegExp('<script[^>]*>([\\S\\s]*?)<\/script\\s*>', 'img'), '');
 				}
 
 				if(bdhtml){
-					//clean those bootstrap fixed class
-					bdhtml = bdhtml.replace(/navbar-fixed-(top|bottom)/gi, '');
-
-					var jtabpane = jcontrol.closest('.tab-pane'),
+					var jtabpane = $('#jform_params_mainlayout').closest('.tab-pane'),
 						active = jtabpane.hasClass('active');
 
 					if(!active){	//if not active, then we show it
 						jtabpane.addClass('active');
 					}
 
-					var	curspan = T3V3AdminLayout.curspan = null,
-						jelms = T3V3AdminLayout.jelms = $('#t3-layout-cont').empty().html(bdhtml),
-						jrlems = T3V3AdminLayout.jrlems = jelms.find('[class*="span"]').each(function(){
+					T3V3AdminLayout.layout.mode = 0; // 0 for structure, 1 for layout
+
+					$('#t3-clone-layout').remove(); // remove the clone Layout button
+					$('#t3-clone-layout-prompt').remove(); // remove the Clone Layout modal
+
+					var	curspan = null,
+						jelms = $(['<div class="t3-layout-cont layout-custom ', vname, ' t3-layout-mode-m"></div>'].join(''))
+							.html(bdhtml).appendTo(jcontrol.find('.controls')),
+						jtbs = $([
+							'<div class="t3-inline-nav clearfix">',
+								'<div class="t3-row-mode clearfix"></div>',
+								'<div class="t3-row-device clearfix"></div>',
+							'</div>'].join(''))
+							.insertBefore(jelms),
+						jmodes = $([
+							'<ul class="nav nav-tabs t3-layout-modes">',
+								'<li class="active mode-structure"><a href="#" title="', T3V3Admin.langs.displayModeStructure, '">', T3V3Admin.langs.displayModeStructure, '</a></li>',
+								'<li class="mode-layout"><a href="#" title="', T3V3Admin.langs.displayModeLayout, '">', T3V3Admin.langs.displayModeLayout, '</a></li>',
+							'</ul>'].join(''))
+							.appendTo(jtbs.find('.t3-row-mode'))
+							.on('click', 'li', function(){
+								if($(this).hasClass('mode-layout')){
+									jelms.removeClass('t3-layout-mode-m').addClass('t3-layout-mode-r');
+									T3V3AdminLayout.layout.mode = 1;
+
+									jdevices.removeClass('hide');
+									jresetdevice.removeClass('hide');
+									jresetposition.addClass('hide');
+
+									jelms.find('.t3-layout-vis').each(T3V3AdminLayout.t3updatevisible);
+									jdevices.find('[data-device="wide"]').removeClass('active').trigger('click');
+								} else {
+									jelms.removeClass('t3-layout-mode-r').addClass('t3-layout-mode-m');
+									T3V3AdminLayout.layout.mode = 0;
+
+									jdevices.addClass('hide');
+									jresetdevice.addClass('hide');
+									jresetposition.removeClass('hide');
+
+									jelms.removeClass(T3V3AdminLayout.layout.clayout);
+									T3V3AdminLayout.t3updatedevice(jelms, jspls, jrlems, 'default');
+								}
+
+								$(this).addClass('active').siblings().removeClass('active');
+								return false;
+							}),
+						jdevices = $([
+							'<div class="btn-group t3-layout-devices hide">',
+								'<button class="btn t3-dv-wide" data-device="wide" title="', T3V3Admin.langs.devideWide, '">', T3V3Admin.langs.devideWide, '</button>',
+								'<button class="btn t3-dv-normal" data-device="normal" title="', T3V3Admin.langs.devideNormal, '">', T3V3Admin.langs.devideNormal, '</button>',
+								'<button class="btn t3-dv-xtablet" data-device="xtablet" title="', T3V3Admin.langs.devideXTablet , '">', T3V3Admin.langs.devideXTablet, '</button>',
+								'<button class="btn t3-dv-tablet" data-device="tablet" title="', T3V3Admin.langs.devideTablet, '">', T3V3Admin.langs.devideTablet, '</button>',
+								'<button class="btn t3-dv-mobile" data-device="mobile" title="', T3V3Admin.langs.devideMobile, '">', T3V3Admin.langs.devideMobile, '</button>',
+							'</div>'].join(''))
+							.appendTo(jtbs.find('.t3-row-device'))
+							.on('click', '.btn', function(e){
+								if(!$(this).hasClass('active')){
+									var nlayout = $(this).attr('data-device');
+									$(this).addClass('active').siblings('.active').removeClass('active');
+
+									jelms.removeClass(T3V3AdminLayout.layout.clayout);
+									if(T3V3AdminLayout.layout.mode == 1){
+										jelms.addClass(nlayout);
+									}
+
+									T3V3AdminLayout.t3updatedevice(jelms, jspls, jrlems, nlayout);
+								}
+
+								return false;
+							}),
+
+						jclonelayout = $('<button class="btn btn-primary t3-clone-layout pull-right" id="t3-clone-layout">' + T3V3Admin.langs.layoutClone + '</button>')
+							.insertAfter('#jform_params_mainlayout')
+							.on('click', function(){
+								$('#t3-clone-layout-prompt').modal({
+									keyboard: true
+								});
+								return false;
+							}),
+
+						jclonelayoutprompt = $([
+							'<div id="t3-clone-layout-prompt" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="' + T3V3Admin.langs.layoutClone + '" aria-hidden="true">',
+								'<div class="modal-header">',
+									'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>',
+									'<h3 id="t3-clone-layout-modal-title">' + T3V3Admin.langs.layoutClone + '</h3>',
+								'</div>',
+								'<div class="modal-body">',
+									'<form class="form-horizontal">',
+										'<div class="control-group">',
+											'<label class="control-label" for="t3-layout-cloned-name">' + T3V3Admin.langs.layoutName + '</label>',
+											'<div class="controls">',
+												'<input type="text" id="t3-layout-cloned-name">',
+											'</div>',
+										'</div>',
+									'</form>',
+								'</div>',
+								'<div class="modal-footer">',
+									'<button class="btn" data-dismiss="modal" aria-hidden="true">' + T3V3Admin.langs.close + '</button>',
+									'<button class="btn btn-primary" id="t3-clone-layout-modal-button">' + T3V3Admin.langs.layoutClone + '</button>',
+								'</div>',
+							'</div>'].join(''))
+							.appendTo('body')
+							.on('show', function(){
+								$('#t3-layout-cloned-name').val($('#jform_params_mainlayout').val() + '-copy');
+							})
+							.on('shown', function(){
+								$('#t3-layout-cloned-name').focus();
+							}),
+
+						jresetall = $('<button class="btn btn-danger t3-reset-all pull-right">' + T3V3Admin.langs.layoutResetAll + '</button>')
+							.insertAfter(jmodes)
+							.on('click', function(){
+								T3V3AdminLayout.t3resetall(jelms);
+								return false;
+							}),
+
+						jresetposition = $('<button class="btn btn-danger t3-reset-position pull-right">' + T3V3Admin.langs.layoutResetPosition + '</button>')
+							.insertAfter(jdevices)
+							.on('click', function(){
+								T3V3AdminLayout.t3resetposition(jelms);
+								return false;
+							}),
+
+						jresetdevice = $('<button class="btn btn-danger t3-reset-device pull-right hide">' + T3V3Admin.langs.layoutResetDevice + '</button>')
+							.insertAfter(jdevices)
+							.on('click', function(){
+								T3V3AdminLayout.t3resetdevice(jelms);
+								return false;
+							}),
+
+						jrlems = jelms.find('[class*="span"]').each(function(){
 							var jelm = $(this);
 							jelm.data();
 							jelm.removeAttr('data-default data-wide data-normal data-xtablet data-tablet data-mobile');
@@ -1123,12 +900,84 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 								jelm.data('default', jelm.attr('class'));
 							}
 						}),
-						jselect = T3V3AdminLayout.jselect,
-						jallpos = T3V3AdminLayout.jallpos,
-						jspls = T3V3AdminLayout.jspls = jelms.find('[data-spotlight]');
 
-					//reset
-					T3V3AdminLayout.t3reset();
+						jallpos = $('#jformparamsjat3_all_pos').clone()
+							.attr({
+								'id': 'jaa_sel_' + ctrl.uid++,
+								'name': '',
+								'style': '',
+							}),
+							
+						jselect = $([
+							'<div class="popover right" style="z-index: 10000">',
+								'<div class="arrow"></div>',
+								'<h3 class="popover-title">', T3V3Admin.langs.popoverLayoutTitle, '</h3>',
+								'<div class="popover-content">',
+									(T3V3Admin.langs.popoverLayoutDesc ? '<p>' + T3V3Admin.langs.popoverLayoutDesc + '</p>' : '' ),
+								'</div>',
+							'</div>'].join(''))
+							.appendTo(document.body)
+							.on('click', function(e){
+								return false;
+							}),
+						jspls = jelms.find('[data-spotlight]');
+
+					$('#t3-clone-layout-modal-button').on('click', function(evt){
+						T3V3AdminLayout.t3clonelayout(jelms);
+					});
+
+					jselect.find('.popover-content').append(
+						jallpos
+						.prop('disabled', false)
+						.prop('size', 10)
+						.on('change', function(){
+							if(curspan){
+								$(curspan).parent().removeClass('pos-off pos-active').find('h3').html(this.value || T3V3Admin.langs.emptyLayoutPosition);
+								$(this).closest('.popover').hide();
+
+								var jspl = $(curspan).parent().parent().parent();
+								if(jspl.attr('data-spotlight')){
+									var spanidx = $(curspan).closest('.t3-layout-unit').index();
+									jspl.nextAll('.t3-layout-hiddenpos').children().eq(spanidx).html((this.value || T3V3Admin.langs.emptyLayoutPosition) + '<i class="icon-eye-close">');
+								}
+
+								if(!this.value){
+									$(curspan).parent().addClass('pos-off');
+								}
+
+								$(this)
+									.next('.t3-chzn-empty')[this.value ? 'removeClass' : 'addClass']('disabled')
+									.next('.t3-chzn-default')[this.value != $(curspan).closest('[data-original]').attr('data-original') ? 'removeClass' : 'addClass']('disabled');
+							}
+
+							return false;
+						})
+					);
+
+					ctrl.elms.push(jselect[0]);
+
+					$(document).off('click.' + vname).on('click.' + vname, function(){
+						if(curspan){
+							$(curspan).parent().removeClass('pos-active');
+						}
+
+						jselect.hide();
+					});
+
+					jallpos
+						.after([
+							'<btn class="btn btn-small t3-chzn-empty"><i class="icon-remove"></i>', T3V3Admin.langs.emptyLayoutPosition, '</btn>',
+							'<btn class="btn btn-small btn-success t3-chzn-default"><i class="icon-ok-circle"></i>', T3V3Admin.langs.defaultLayoutPosition, '</btn>'
+							].join(''))
+						.nextAll('.t3-chzn-empty, .t3-chzn-default')
+						.on('click', function(){
+							if(curspan && !$(this).hasClass('disabled')){
+								var vdef = $(this).hasClass('t3-chzn-default') ? $(curspan).closest('[data-original]').attr('data-original') : '';
+								jallpos.val(vdef).trigger('change');
+							}
+
+							return false;
+						});
 
 					jelms
 						.find('.logo h1:first')
@@ -1136,7 +985,7 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 
 					jelms
 						.find('.t3-layout-pos')
-						.not('.t3-layout-uneditable')
+						.not('.block-message, .block-component')
 						.prepend('<span class="t3-layout-edit" title="' + T3V3Admin.langs.layoutEditPosition + '"><i class="icon-cog"></i></span>');
 
 					jelms
@@ -1169,14 +1018,13 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 						});
 
 					jelms
-						.off('click.t3lvis').off('click.t3ledit')
-						.on('click.t3lvis', '.t3-layout-vis', T3V3AdminLayout.t3onvisible)
-						.on('click.t3ledit', '.t3-layout-edit', function(e){
+						.on('click', '.t3-layout-vis', T3V3AdminLayout.t3onvisible)
+						.on('click', '.t3-layout-edit', function(e){
 							if(curspan){
 								$(curspan).parent().removeClass('pos-active');
 							}
-							curspan = T3V3AdminLayout.curspan = this;
 
+							curspan = this;
 							var jspan = $(this),
 								offs = $(this).offset();
 
@@ -1331,28 +1179,22 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 							});
 						});
 
-					T3V3AdminLayout.t3equalheight();
+					T3V3AdminLayout.t3equalheight(jelms);
 
 					if(!active){	//restore current status
 						jtabpane.removeClass('active');
 					}
-
-					$('#t3-layout-admin').removeClass('hide');
-
-					T3V3AdminLayout.initMarkChange();
-
 				} else {
 					jcontrol.find('.controls').html('<p class="t3-layout-error">' + T3V3Admin.langs.layoutCanNotLoad + '</p>');
 				}
+
+				ctrl.elms.push(jcontrol[0]);
 			}
 		}
 	});
 	
 	$(document).ready(function(){
-		T3V3AdminLayout.initPrepareLayout();
-		T3V3AdminLayout.initLayoutClone();
-		T3V3AdminLayout.initModalDialog();
-		T3V3AdminLayout.initPreSubmit();
+		T3V3AdminLayout.initLayoutPosition();
 	});
 	
 }(window.$ja || window.jQuery);
@@ -1379,7 +1221,7 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 
 			$(curelm).parent().children().each(function(idx){
 				if(memvisible[idx] == 0 || memvisible[idx] == undefined){
-					if(needfirst || ((sum + parseInt(memwidth[idx]) > T3V3AdminLayout.layout.maxgrid) || (rzindex + 1 == idx && sum + parseInt(memwidth[idx]) == T3V3AdminLayout.layout.maxgrid && (rwidth > owidth)))){
+					if(needfirst || ((sum + parseInt(memwidth[idx]) > T3V3Admin.layout.maxgrid) || (rzindex + 1 == idx && sum + parseInt(memwidth[idx]) == T3V3Admin.layout.maxgrid && (rwidth > owidth)))){
 						$(this).addClass('spanfirst');
 						memfirst[idx] = 1;
 						sum = parseInt(memwidth[idx]);
@@ -1440,7 +1282,7 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 			}
 
 			curelm.className = curelm.className.replace(/(\s*)span(\d+)(\s*)/g, ' ');
-			$(curelm).css('width', '').addClass('span' + T3V3AdminLayout.t3widthconvert((rzminspan * ((width + opts.gap) / opts.grid) >> 0)));
+			$(curelm).css('width', '').addClass('span' + T3V3Admin.t3widthconvert((rzminspan * ((width + opts.gap) / opts.grid) >> 0)));
 
 			spanfirst(width);
 		},
@@ -1454,8 +1296,8 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 			var jdata = $(this).closest('.t3-layout-xresize');
 			
 			opts = jdata.data('rzdata');
-			rzlayout = T3V3AdminLayout.layout.clayout;
-			rzminspan = T3V3AdminLayout.layout.unitspan[rzlayout];
+			rzlayout = T3V3Admin.layout.clayout;
+			rzminspan = T3V3Admin.layout.unitspan[rzlayout];
 			rzindex = $(this).parent().index();
 			memwidth = jdata.data('data-widths')[rzlayout];
 			memfirst = jdata.data('data-firsts')[rzlayout];
