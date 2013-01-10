@@ -547,6 +547,29 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 			jcontainer.find('.t3-layout-vis').each(T3V3AdminLayout.t3updatevisible);
 		},
 
+		t3clonelayout: function(container){
+			$.ajax({
+					async: false,
+					url: T3V3AdminLayout.mergeurl('t3action=layout&t3task=copy&template=' + T3V3Admin.template + '&original=' + $('#jform_params_mainlayout').val() + '&clone=' + $('#t3-layout-cloned-name').val()),
+					type: 'get',
+					success: function(response){
+						response = $.parseJSON(response);
+						if (!response.error && response.successful)
+						{
+							var field = jQuery('#jform_params_mainlayout');
+							field.append($('<option value="' + response.clone + '">' + response.clone + '</option>'));
+							field.val(response.clone);
+							field.trigger("liszt:updated");
+
+							$('#jform_params_mainlayout').trigger('change.less');
+						}
+					},
+					complete: function(){
+						$('#t3-clone-layout-prompt').modal('hide');
+					}
+				});
+		},
+
 		t3resetall: function(container){
 			var layout = T3V3AdminLayout.layout.clayout,
 				jcontainer = $(container),
@@ -741,6 +764,9 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 
 					T3V3AdminLayout.layout.mode = 0; // 0 for structure, 1 for layout
 
+					$('#t3-clone-layout').remove(); // remove the clone Layout button
+					$('#t3-clone-layout-prompt').remove(); // remove the Clone Layout modal
+
 					var	curspan = null,
 						jelms = $(['<div class="t3-layout-cont layout-custom ', vname, ' t3-layout-mode-m"></div>'].join(''))
 							.html(bdhtml).appendTo(jcontrol.find('.controls')),
@@ -806,7 +832,45 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 
 								return false;
 							}),
-						
+
+						jclonelayout = $('<button class="btn btn-primary t3-clone-layout pull-right" id="t3-clone-layout">' + T3V3Admin.langs.layoutClone + '</button>')
+							.insertAfter('#jform_params_mainlayout')
+							.on('click', function(){
+								$('#t3-clone-layout-prompt').modal({
+									keyboard: true
+								});
+								return false;
+							}),
+
+						jclonelayoutprompt = $([
+							'<div id="t3-clone-layout-prompt" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="' + T3V3Admin.langs.layoutClone + '" aria-hidden="true">',
+								'<div class="modal-header">',
+									'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>',
+									'<h3 id="t3-clone-layout-modal-title">' + T3V3Admin.langs.layoutClone + '</h3>',
+								'</div>',
+								'<div class="modal-body">',
+									'<form class="form-horizontal">',
+										'<div class="control-group">',
+											'<label class="control-label" for="t3-layout-cloned-name">' + T3V3Admin.langs.layoutName + '</label>',
+											'<div class="controls">',
+												'<input type="text" id="t3-layout-cloned-name">',
+											'</div>',
+										'</div>',
+									'</form>',
+								'</div>',
+								'<div class="modal-footer">',
+									'<button class="btn" data-dismiss="modal" aria-hidden="true">' + T3V3Admin.langs.close + '</button>',
+									'<button class="btn btn-primary" id="t3-clone-layout-modal-button">' + T3V3Admin.langs.layoutClone + '</button>',
+								'</div>',
+							'</div>'].join(''))
+							.appendTo('body')
+							.on('show', function(){
+								$('#t3-layout-cloned-name').val($('#jform_params_mainlayout').val() + '-copy');
+							})
+							.on('shown', function(){
+								$('#t3-layout-cloned-name').focus();
+							}),
+
 						jresetall = $('<button class="btn btn-danger t3-reset-all pull-right">' + T3V3Admin.langs.layoutResetAll + '</button>')
 							.insertAfter(jmodes)
 							.on('click', function(){
@@ -857,6 +921,10 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 								return false;
 							}),
 						jspls = jelms.find('[data-spotlight]');
+
+					$('#t3-clone-layout-modal-button').on('click', function(evt){
+						T3V3AdminLayout.t3clonelayout(jelms);
+					});
 
 					jselect.find('.popover-content').append(
 						jallpos

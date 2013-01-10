@@ -102,4 +102,43 @@ class T3v3AdminLayout
 			'type' => 'new'
 			));
 	}
+
+	public static function copy()
+	{
+		// Initialize some variables
+		$input = JFactory::getApplication()->input;
+		$template = $input->getCmd('template');
+		$original = $input->getCmd('original');
+		$clone = $input->getCmd('clone');
+
+		if (!$template || !$original || !$clone) {
+			return self::error(JText::_('INVALID_DATA_TO_SAVE'));
+		}
+
+		$originalPath = JPATH_ROOT . '/templates/' . $template . '/tpls/' . $original . '.php';
+		$clonePath = JPATH_ROOT . '/templates/' . $template . '/tpls/' . $clone . '.php';
+
+		// Check if original file exists
+		if (JFile::exists($originalPath)) {
+			// Check if the desired file already exists
+			if (!JFile::exists($clonePath)) {
+				if (!JFile::copy($originalPath, $clonePath)) {
+					return self::error(JText::_('OPERATION_FAILED'));
+				}
+			}
+			else {
+				return self::error(JText::_('OPERATION_FAILED'));
+			}
+		}
+		else {
+			return self::error(JText::_('OPERATION_FAILED'));
+		}
+
+		return self::response(array(
+			'successful' => true,
+			'original' => $original,
+			'clone' => $clone,
+			'type' => 'clone'
+			));
+	}
 }

@@ -112,7 +112,9 @@ class T3v3Admin {
 			'layoutResetAll' => JText::_('T3V3_LAYOUT_RESET_ALL'),
 			'layoutResetDevice' => JText::_('T3V3_LAYOUT_RESET_PER_DEVICE'),
 			'layoutResetPosition' => JText::_('T3V3_LAYOUT_RESET_POSITION'),
-			
+			'layoutClone' => JText::_('T3V3_LAYOUT_CLONE'),
+			'layoutName' => JText::_('T3V3_LAYOUT_NAME'),
+
 			'layoutConfig' => JText::_('T3V3_LAYOUT_CONFIG_TITLE'),
 			'layoutConfigDesc' => JText::_('T3V3_LAYOUT_CONFIG_DESC'),
 			'layoutUnknownWidth' => JText::_('T3V3_LAYOUT_UNKN_WIDTH'),
@@ -133,7 +135,9 @@ class T3v3Admin {
 			'updateCheckUpdate' => JText::_('T3V3_OVERVIEW_CHECK_UPDATE'),
 			'updateChkComplete' => JText::_('T3V3_OVERVIEW_CHK_UPDATE_OK'),
 			'updateHasNew' => JText::_('T3V3_OVERVIEW_TPL_NEW'),
-			'updateCompare' => JText::_('T3V3_OVERVIEW_TPL_COMPARE')
+			'updateCompare' => JText::_('T3V3_OVERVIEW_TPL_COMPARE'),
+
+			'close' => JText::_('T3V3_TOOLBAR_CLOSE')
 		);
 		
 
