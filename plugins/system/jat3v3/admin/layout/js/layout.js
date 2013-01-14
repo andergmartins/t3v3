@@ -922,8 +922,17 @@ var T3V3AdminLayout = window.T3V3AdminLayout || {};
 							}),
 						jspls = jelms.find('[data-spotlight]');
 
-					$('#t3-clone-layout-modal-button').on('click', function(evt){
+					$('#t3-clone-layout-modal-button').on('click', function(evt) {
 						T3V3AdminLayout.t3clonelayout(jelms);
+					});
+
+					$('#t3-layout-cloned-name').on('keypress', function(evt) {
+						if (evt.keyCode === 13)
+						{
+							evt.preventDefault();
+
+							$('#t3-clone-layout-modal-button').trigger('click');
+						}
 					});
 
 					jselect.find('.popover-content').append(
