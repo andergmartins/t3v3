@@ -23,7 +23,7 @@ class T3v3AdminLayout
 	}
 
 	public static function display(){
-		
+
 		$japp = JFactory::getApplication();
 		if(!$japp->isAdmin()){
 			$tpl = $japp->getTemplate(true);
@@ -82,7 +82,7 @@ class T3v3AdminLayout
 		if (!$template || !$layout) {
 			return self::error(JText::_('INVALID_DATA_TO_SAVE'));
 		}
-		
+
 		$file = JPATH_ROOT . '/templates/' . $template . '/etc/layout/' . $layout . '.ini';
 		if (JFile::exists($file)) {
 			@chmod($file, 0777);
@@ -115,15 +115,36 @@ class T3v3AdminLayout
 			return self::error(JText::_('INVALID_DATA_TO_SAVE'));
 		}
 
-		$originalPath = JPATH_ROOT . '/templates/' . $template . '/tpls/' . $original . '.php';
-		$clonePath = JPATH_ROOT . '/templates/' . $template . '/tpls/' . $clone . '.php';
+		$parentPath = JPATH_ROOT . '/templates/' . $template . '/tpls/';
+		$originalPath = $parentPath . $original . '.php';
+		$clonePath = $parentPath . $clone . '.php';
 
 		// Check if original file exists
 		if (JFile::exists($originalPath)) {
 			// Check if the desired file already exists
 			if (!JFile::exists($clonePath)) {
+				// Prevent file permission error
+				$restoreFoldermode = !is_writeable($parentPath);
+				if ($restoreFoldermode)
+				{
+					// newt_form_get_current(form) as writable
+					@chmod($parentPath, 0777);
+				}
+
 				if (!JFile::copy($originalPath, $clonePath)) {
+					if ($restoreFoldermode)
+					{
+						// Restore the safe permission
+						@chmod($parentPath, 0755);
+					}
+
 					return self::error(JText::_('OPERATION_FAILED'));
+				}
+
+				if ($restoreFoldermode)
+				{
+					// Restore the safe permission
+					@chmod($parentPath, 0755);
 				}
 			}
 			else {
