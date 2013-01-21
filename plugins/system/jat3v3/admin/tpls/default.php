@@ -104,7 +104,7 @@ $iswritable = is_writable('jat3test.txt');
 			</div>
 			<?php
 			foreach ($fieldSets as $name => $fieldSet) :
-				
+
 				?>
 				<div class="tab-pane<?php echo $t3lock == preg_replace( '/\s+/', ' ', $name) ? ' active' : ''?>" id="<?php echo preg_replace( '/\s+/', ' ', $name); ?>">
 					<?php
